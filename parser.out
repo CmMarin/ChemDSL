@@ -1,0 +1,767 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> statement_list
+Rule 2     statement_list -> statement SEMICOLON statement_list
+Rule 3     statement_list -> statement SEMICOLON
+Rule 4     predict_statement -> PREDICT COMBUSTION OF reactants_expr
+Rule 5     predict_statement -> PREDICT SYNTHESIS OF reactants_expr
+Rule 6     predict_statement -> PREDICT DECOMPOSITION OF reactants_expr
+Rule 7     predict_statement -> PREDICT SINGLE_REPLACEMENT OF reactants_expr
+Rule 8     predict_statement -> PREDICT DOUBLE_REPLACEMENT OF reactants_expr
+Rule 9     predict_statement -> PREDICT PRECIPITATION OF reactants_expr
+Rule 10    predict_statement -> PREDICT REDOX OF reactants_expr
+Rule 11    predict_statement -> PREDICT ACID_BASE OF reactants_expr
+Rule 12    predict_statement -> PREDICT reactants_expr
+Rule 13    statement -> balance_statement
+Rule 14    statement -> predict_statement
+Rule 15    balance_statement -> BALANCE reaction_expr
+Rule 16    reaction_expr -> reactants_expr ARROW products_expr
+Rule 17    reactants_expr -> chemical_term_list
+Rule 18    products_expr -> chemical_term_list
+Rule 19    chemical_term_list -> chemical_term PLUS chemical_term_list
+Rule 20    chemical_term_list -> chemical_term
+Rule 21    chemical_term -> coefficient chemical_expr
+Rule 22    chemical_term -> chemical_expr
+Rule 23    coefficient -> DIGITS
+Rule 24    chemical_expr -> molecule
+Rule 25    molecule -> molecule element_group
+Rule 26    molecule -> element_group
+Rule 27    element_group -> ELEMENT_SYMBOL DIGITS
+Rule 28    element_group -> ELEMENT_SYMBOL
+
+Terminals, with rules where they appear
+
+ACID_BASE            : 11
+ARROW                : 16
+BALANCE              : 15
+COMBUSTION           : 4
+DECOMPOSITION        : 6
+DIGITS               : 23 27
+DOUBLE_REPLACEMENT   : 8
+ELEMENT_SYMBOL       : 27 28
+OF                   : 4 5 6 7 8 9 10 11
+PLUS                 : 19
+PRECIPITATION        : 9
+PREDICT              : 4 5 6 7 8 9 10 11 12
+REDOX                : 10
+SEMICOLON            : 2 3
+SINGLE_REPLACEMENT   : 7
+SYNTHESIS            : 5
+error                : 
+
+Nonterminals, with rules where they appear
+
+balance_statement    : 13
+chemical_expr        : 21 22
+chemical_term        : 19 20
+chemical_term_list   : 17 18 19
+coefficient          : 21
+element_group        : 25 26
+molecule             : 24 25
+predict_statement    : 14
+products_expr        : 16
+program              : 0
+reactants_expr       : 4 5 6 7 8 9 10 11 12 16
+reaction_expr        : 15
+statement            : 2 3
+statement_list       : 1 2
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . statement_list
+    (2) statement_list -> . statement SEMICOLON statement_list
+    (3) statement_list -> . statement SEMICOLON
+    (13) statement -> . balance_statement
+    (14) statement -> . predict_statement
+    (15) balance_statement -> . BALANCE reaction_expr
+    (4) predict_statement -> . PREDICT COMBUSTION OF reactants_expr
+    (5) predict_statement -> . PREDICT SYNTHESIS OF reactants_expr
+    (6) predict_statement -> . PREDICT DECOMPOSITION OF reactants_expr
+    (7) predict_statement -> . PREDICT SINGLE_REPLACEMENT OF reactants_expr
+    (8) predict_statement -> . PREDICT DOUBLE_REPLACEMENT OF reactants_expr
+    (9) predict_statement -> . PREDICT PRECIPITATION OF reactants_expr
+    (10) predict_statement -> . PREDICT REDOX OF reactants_expr
+    (11) predict_statement -> . PREDICT ACID_BASE OF reactants_expr
+    (12) predict_statement -> . PREDICT reactants_expr
+
+    BALANCE         shift and go to state 6
+    PREDICT         shift and go to state 7
+
+    program                        shift and go to state 1
+    statement_list                 shift and go to state 2
+    statement                      shift and go to state 3
+    balance_statement              shift and go to state 4
+    predict_statement              shift and go to state 5
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> statement_list .
+
+    $end            reduce using rule 1 (program -> statement_list .)
+
+
+state 3
+
+    (2) statement_list -> statement . SEMICOLON statement_list
+    (3) statement_list -> statement . SEMICOLON
+
+    SEMICOLON       shift and go to state 8
+
+
+state 4
+
+    (13) statement -> balance_statement .
+
+    SEMICOLON       reduce using rule 13 (statement -> balance_statement .)
+
+
+state 5
+
+    (14) statement -> predict_statement .
+
+    SEMICOLON       reduce using rule 14 (statement -> predict_statement .)
+
+
+state 6
+
+    (15) balance_statement -> BALANCE . reaction_expr
+    (16) reaction_expr -> . reactants_expr ARROW products_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reaction_expr                  shift and go to state 9
+    reactants_expr                 shift and go to state 10
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 7
+
+    (4) predict_statement -> PREDICT . COMBUSTION OF reactants_expr
+    (5) predict_statement -> PREDICT . SYNTHESIS OF reactants_expr
+    (6) predict_statement -> PREDICT . DECOMPOSITION OF reactants_expr
+    (7) predict_statement -> PREDICT . SINGLE_REPLACEMENT OF reactants_expr
+    (8) predict_statement -> PREDICT . DOUBLE_REPLACEMENT OF reactants_expr
+    (9) predict_statement -> PREDICT . PRECIPITATION OF reactants_expr
+    (10) predict_statement -> PREDICT . REDOX OF reactants_expr
+    (11) predict_statement -> PREDICT . ACID_BASE OF reactants_expr
+    (12) predict_statement -> PREDICT . reactants_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    COMBUSTION      shift and go to state 19
+    SYNTHESIS       shift and go to state 21
+    DECOMPOSITION   shift and go to state 22
+    SINGLE_REPLACEMENT shift and go to state 23
+    DOUBLE_REPLACEMENT shift and go to state 24
+    PRECIPITATION   shift and go to state 25
+    REDOX           shift and go to state 26
+    ACID_BASE       shift and go to state 27
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reactants_expr                 shift and go to state 20
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 8
+
+    (2) statement_list -> statement SEMICOLON . statement_list
+    (3) statement_list -> statement SEMICOLON .
+    (2) statement_list -> . statement SEMICOLON statement_list
+    (3) statement_list -> . statement SEMICOLON
+    (13) statement -> . balance_statement
+    (14) statement -> . predict_statement
+    (15) balance_statement -> . BALANCE reaction_expr
+    (4) predict_statement -> . PREDICT COMBUSTION OF reactants_expr
+    (5) predict_statement -> . PREDICT SYNTHESIS OF reactants_expr
+    (6) predict_statement -> . PREDICT DECOMPOSITION OF reactants_expr
+    (7) predict_statement -> . PREDICT SINGLE_REPLACEMENT OF reactants_expr
+    (8) predict_statement -> . PREDICT DOUBLE_REPLACEMENT OF reactants_expr
+    (9) predict_statement -> . PREDICT PRECIPITATION OF reactants_expr
+    (10) predict_statement -> . PREDICT REDOX OF reactants_expr
+    (11) predict_statement -> . PREDICT ACID_BASE OF reactants_expr
+    (12) predict_statement -> . PREDICT reactants_expr
+
+    $end            reduce using rule 3 (statement_list -> statement SEMICOLON .)
+    BALANCE         shift and go to state 6
+    PREDICT         shift and go to state 7
+
+    statement                      shift and go to state 3
+    statement_list                 shift and go to state 28
+    balance_statement              shift and go to state 4
+    predict_statement              shift and go to state 5
+
+state 9
+
+    (15) balance_statement -> BALANCE reaction_expr .
+
+    SEMICOLON       reduce using rule 15 (balance_statement -> BALANCE reaction_expr .)
+
+
+state 10
+
+    (16) reaction_expr -> reactants_expr . ARROW products_expr
+
+    ARROW           shift and go to state 29
+
+
+state 11
+
+    (17) reactants_expr -> chemical_term_list .
+
+    ARROW           reduce using rule 17 (reactants_expr -> chemical_term_list .)
+    SEMICOLON       reduce using rule 17 (reactants_expr -> chemical_term_list .)
+
+
+state 12
+
+    (19) chemical_term_list -> chemical_term . PLUS chemical_term_list
+    (20) chemical_term_list -> chemical_term .
+
+    PLUS            shift and go to state 30
+    ARROW           reduce using rule 20 (chemical_term_list -> chemical_term .)
+    SEMICOLON       reduce using rule 20 (chemical_term_list -> chemical_term .)
+
+
+state 13
+
+    (21) chemical_term -> coefficient . chemical_expr
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    chemical_expr                  shift and go to state 31
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 14
+
+    (22) chemical_term -> chemical_expr .
+
+    PLUS            reduce using rule 22 (chemical_term -> chemical_expr .)
+    ARROW           reduce using rule 22 (chemical_term -> chemical_expr .)
+    SEMICOLON       reduce using rule 22 (chemical_term -> chemical_expr .)
+
+
+state 15
+
+    (23) coefficient -> DIGITS .
+
+    ELEMENT_SYMBOL  reduce using rule 23 (coefficient -> DIGITS .)
+
+
+state 16
+
+    (24) chemical_expr -> molecule .
+    (25) molecule -> molecule . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    PLUS            reduce using rule 24 (chemical_expr -> molecule .)
+    ARROW           reduce using rule 24 (chemical_expr -> molecule .)
+    SEMICOLON       reduce using rule 24 (chemical_expr -> molecule .)
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    element_group                  shift and go to state 32
+
+state 17
+
+    (26) molecule -> element_group .
+
+    ELEMENT_SYMBOL  reduce using rule 26 (molecule -> element_group .)
+    PLUS            reduce using rule 26 (molecule -> element_group .)
+    ARROW           reduce using rule 26 (molecule -> element_group .)
+    SEMICOLON       reduce using rule 26 (molecule -> element_group .)
+
+
+state 18
+
+    (27) element_group -> ELEMENT_SYMBOL . DIGITS
+    (28) element_group -> ELEMENT_SYMBOL .
+
+    DIGITS          shift and go to state 33
+    ELEMENT_SYMBOL  reduce using rule 28 (element_group -> ELEMENT_SYMBOL .)
+    PLUS            reduce using rule 28 (element_group -> ELEMENT_SYMBOL .)
+    ARROW           reduce using rule 28 (element_group -> ELEMENT_SYMBOL .)
+    SEMICOLON       reduce using rule 28 (element_group -> ELEMENT_SYMBOL .)
+
+
+state 19
+
+    (4) predict_statement -> PREDICT COMBUSTION . OF reactants_expr
+
+    OF              shift and go to state 34
+
+
+state 20
+
+    (12) predict_statement -> PREDICT reactants_expr .
+
+    SEMICOLON       reduce using rule 12 (predict_statement -> PREDICT reactants_expr .)
+
+
+state 21
+
+    (5) predict_statement -> PREDICT SYNTHESIS . OF reactants_expr
+
+    OF              shift and go to state 35
+
+
+state 22
+
+    (6) predict_statement -> PREDICT DECOMPOSITION . OF reactants_expr
+
+    OF              shift and go to state 36
+
+
+state 23
+
+    (7) predict_statement -> PREDICT SINGLE_REPLACEMENT . OF reactants_expr
+
+    OF              shift and go to state 37
+
+
+state 24
+
+    (8) predict_statement -> PREDICT DOUBLE_REPLACEMENT . OF reactants_expr
+
+    OF              shift and go to state 38
+
+
+state 25
+
+    (9) predict_statement -> PREDICT PRECIPITATION . OF reactants_expr
+
+    OF              shift and go to state 39
+
+
+state 26
+
+    (10) predict_statement -> PREDICT REDOX . OF reactants_expr
+
+    OF              shift and go to state 40
+
+
+state 27
+
+    (11) predict_statement -> PREDICT ACID_BASE . OF reactants_expr
+
+    OF              shift and go to state 41
+
+
+state 28
+
+    (2) statement_list -> statement SEMICOLON statement_list .
+
+    $end            reduce using rule 2 (statement_list -> statement SEMICOLON statement_list .)
+
+
+state 29
+
+    (16) reaction_expr -> reactants_expr ARROW . products_expr
+    (18) products_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    products_expr                  shift and go to state 42
+    chemical_term_list             shift and go to state 43
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 30
+
+    (19) chemical_term_list -> chemical_term PLUS . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    chemical_term                  shift and go to state 12
+    chemical_term_list             shift and go to state 44
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 31
+
+    (21) chemical_term -> coefficient chemical_expr .
+
+    PLUS            reduce using rule 21 (chemical_term -> coefficient chemical_expr .)
+    ARROW           reduce using rule 21 (chemical_term -> coefficient chemical_expr .)
+    SEMICOLON       reduce using rule 21 (chemical_term -> coefficient chemical_expr .)
+
+
+state 32
+
+    (25) molecule -> molecule element_group .
+
+    ELEMENT_SYMBOL  reduce using rule 25 (molecule -> molecule element_group .)
+    PLUS            reduce using rule 25 (molecule -> molecule element_group .)
+    ARROW           reduce using rule 25 (molecule -> molecule element_group .)
+    SEMICOLON       reduce using rule 25 (molecule -> molecule element_group .)
+
+
+state 33
+
+    (27) element_group -> ELEMENT_SYMBOL DIGITS .
+
+    ELEMENT_SYMBOL  reduce using rule 27 (element_group -> ELEMENT_SYMBOL DIGITS .)
+    PLUS            reduce using rule 27 (element_group -> ELEMENT_SYMBOL DIGITS .)
+    ARROW           reduce using rule 27 (element_group -> ELEMENT_SYMBOL DIGITS .)
+    SEMICOLON       reduce using rule 27 (element_group -> ELEMENT_SYMBOL DIGITS .)
+
+
+state 34
+
+    (4) predict_statement -> PREDICT COMBUSTION OF . reactants_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reactants_expr                 shift and go to state 45
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 35
+
+    (5) predict_statement -> PREDICT SYNTHESIS OF . reactants_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reactants_expr                 shift and go to state 46
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 36
+
+    (6) predict_statement -> PREDICT DECOMPOSITION OF . reactants_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reactants_expr                 shift and go to state 47
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 37
+
+    (7) predict_statement -> PREDICT SINGLE_REPLACEMENT OF . reactants_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reactants_expr                 shift and go to state 48
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 38
+
+    (8) predict_statement -> PREDICT DOUBLE_REPLACEMENT OF . reactants_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reactants_expr                 shift and go to state 49
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 39
+
+    (9) predict_statement -> PREDICT PRECIPITATION OF . reactants_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reactants_expr                 shift and go to state 50
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 40
+
+    (10) predict_statement -> PREDICT REDOX OF . reactants_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reactants_expr                 shift and go to state 51
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 41
+
+    (11) predict_statement -> PREDICT ACID_BASE OF . reactants_expr
+    (17) reactants_expr -> . chemical_term_list
+    (19) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (20) chemical_term_list -> . chemical_term
+    (21) chemical_term -> . coefficient chemical_expr
+    (22) chemical_term -> . chemical_expr
+    (23) coefficient -> . DIGITS
+    (24) chemical_expr -> . molecule
+    (25) molecule -> . molecule element_group
+    (26) molecule -> . element_group
+    (27) element_group -> . ELEMENT_SYMBOL DIGITS
+    (28) element_group -> . ELEMENT_SYMBOL
+
+    DIGITS          shift and go to state 15
+    ELEMENT_SYMBOL  shift and go to state 18
+
+    reactants_expr                 shift and go to state 52
+    chemical_term_list             shift and go to state 11
+    chemical_term                  shift and go to state 12
+    coefficient                    shift and go to state 13
+    chemical_expr                  shift and go to state 14
+    molecule                       shift and go to state 16
+    element_group                  shift and go to state 17
+
+state 42
+
+    (16) reaction_expr -> reactants_expr ARROW products_expr .
+
+    SEMICOLON       reduce using rule 16 (reaction_expr -> reactants_expr ARROW products_expr .)
+
+
+state 43
+
+    (18) products_expr -> chemical_term_list .
+
+    SEMICOLON       reduce using rule 18 (products_expr -> chemical_term_list .)
+
+
+state 44
+
+    (19) chemical_term_list -> chemical_term PLUS chemical_term_list .
+
+    ARROW           reduce using rule 19 (chemical_term_list -> chemical_term PLUS chemical_term_list .)
+    SEMICOLON       reduce using rule 19 (chemical_term_list -> chemical_term PLUS chemical_term_list .)
+
+
+state 45
+
+    (4) predict_statement -> PREDICT COMBUSTION OF reactants_expr .
+
+    SEMICOLON       reduce using rule 4 (predict_statement -> PREDICT COMBUSTION OF reactants_expr .)
+
+
+state 46
+
+    (5) predict_statement -> PREDICT SYNTHESIS OF reactants_expr .
+
+    SEMICOLON       reduce using rule 5 (predict_statement -> PREDICT SYNTHESIS OF reactants_expr .)
+
+
+state 47
+
+    (6) predict_statement -> PREDICT DECOMPOSITION OF reactants_expr .
+
+    SEMICOLON       reduce using rule 6 (predict_statement -> PREDICT DECOMPOSITION OF reactants_expr .)
+
+
+state 48
+
+    (7) predict_statement -> PREDICT SINGLE_REPLACEMENT OF reactants_expr .
+
+    SEMICOLON       reduce using rule 7 (predict_statement -> PREDICT SINGLE_REPLACEMENT OF reactants_expr .)
+
+
+state 49
+
+    (8) predict_statement -> PREDICT DOUBLE_REPLACEMENT OF reactants_expr .
+
+    SEMICOLON       reduce using rule 8 (predict_statement -> PREDICT DOUBLE_REPLACEMENT OF reactants_expr .)
+
+
+state 50
+
+    (9) predict_statement -> PREDICT PRECIPITATION OF reactants_expr .
+
+    SEMICOLON       reduce using rule 9 (predict_statement -> PREDICT PRECIPITATION OF reactants_expr .)
+
+
+state 51
+
+    (10) predict_statement -> PREDICT REDOX OF reactants_expr .
+
+    SEMICOLON       reduce using rule 10 (predict_statement -> PREDICT REDOX OF reactants_expr .)
+
+
+state 52
+
+    (11) predict_statement -> PREDICT ACID_BASE OF reactants_expr .
+
+    SEMICOLON       reduce using rule 11 (predict_statement -> PREDICT ACID_BASE OF reactants_expr .)
+
