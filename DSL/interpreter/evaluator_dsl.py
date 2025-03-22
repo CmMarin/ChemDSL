@@ -108,7 +108,7 @@ class Evaluator:
             if predicted_reaction:
                 # Store the predicted reaction in the environment for later reference
                 reaction_str = str(predicted_reaction)
-                self.env.set('last_predicted_reaction', reaction_str)
+                self.env.define('last_predicted_reaction', reaction_str)
 
                 return f"Predicted Reaction: {reaction_str}"
             else:

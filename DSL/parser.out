@@ -69,7 +69,7 @@ Rule 3     statement_list -> statement SEMICOLON
 Rule 4     statement -> balance_statement
 Rule 5     statement -> predict_statement
 Rule 6     balance_statement -> BALANCE reaction_expr
-Rule 7     predict_statement -> PREDICT reaction_expr
+Rule 7     predict_statement -> PREDICT reactants_expr
 Rule 8     reaction_expr -> reactants_expr ARROW products_expr
 Rule 9     reactants_expr -> chemical_term_list
 Rule 10    products_expr -> chemical_term_list
@@ -165,8 +165,8 @@ molecule_part        : 15 16
 predict_statement    : 5
 products_expr        : 8
 program              : 0
-reactants_expr       : 8
-reaction_expr        : 6 7
+reactants_expr       : 7 8
+reaction_expr        : 6
 statement            : 2 3
 statement_list       : 1 2
 
@@ -181,7 +181,7 @@ state 0
     (4) statement -> . balance_statement
     (5) statement -> . predict_statement
     (6) balance_statement -> . BALANCE reaction_expr
-    (7) predict_statement -> . PREDICT reaction_expr
+    (7) predict_statement -> . PREDICT reactants_expr
 
     BALANCE         shift and go to state 6
     PREDICT         shift and go to state 7
@@ -257,8 +257,7 @@ state 6
 
 state 7
 
-    (7) predict_statement -> PREDICT . reaction_expr
-    (8) reaction_expr -> . reactants_expr ARROW products_expr
+    (7) predict_statement -> PREDICT . reactants_expr
     (9) reactants_expr -> . chemical_term_list
     (11) chemical_term_list -> . chemical_term PLUS chemical_term_list
     (12) chemical_term_list -> . chemical_term
@@ -275,8 +274,7 @@ state 7
     LPAREN          shift and go to state 17
     ELEMENT_SYMBOL  shift and go to state 18
 
-    reaction_expr                  shift and go to state 19
-    reactants_expr                 shift and go to state 10
+    reactants_expr                 shift and go to state 19
     chemical_term_list             shift and go to state 11
     chemical_term                  shift and go to state 12
     molecule                       shift and go to state 14
@@ -292,7 +290,7 @@ state 8
     (4) statement -> . balance_statement
     (5) statement -> . predict_statement
     (6) balance_statement -> . BALANCE reaction_expr
-    (7) predict_statement -> . PREDICT reaction_expr
+    (7) predict_statement -> . PREDICT reactants_expr
 
     $end            reduce using rule 3 (statement_list -> statement SEMICOLON .)
     BALANCE         shift and go to state 6
@@ -322,6 +320,7 @@ state 11
     (9) reactants_expr -> chemical_term_list .
 
     ARROW           reduce using rule 9 (reactants_expr -> chemical_term_list .)
+    SEMICOLON       reduce using rule 9 (reactants_expr -> chemical_term_list .)
 
 
 state 12
@@ -427,9 +426,9 @@ state 18
 
 state 19
 
-    (7) predict_statement -> PREDICT reaction_expr .
+    (7) predict_statement -> PREDICT reactants_expr .
 
-    SEMICOLON       reduce using rule 7 (predict_statement -> PREDICT reaction_expr .)
+    SEMICOLON       reduce using rule 7 (predict_statement -> PREDICT reactants_expr .)
 
 
 state 20

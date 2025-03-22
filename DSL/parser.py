@@ -28,8 +28,10 @@ def p_balance_statement(p):
     p[0] = nodes.BalanceStatementNode(p[2])
 
 def p_predict_statement(p):
-    """predict_statement : PREDICT reaction_expr"""
-    p[0] = nodes.PredictStatementNode(p[2])
+    """predict_statement : PREDICT reactants_expr"""
+    # Create a ReactionExpressionNode with reactants and empty products
+    reaction_expr = nodes.ReactionExpressionNode(reactants=p[2], products=[])
+    p[0] = nodes.PredictStatementNode(reaction_expr)
 
 def p_reaction_expr(p):
     """reaction_expr : reactants_expr ARROW products_expr"""

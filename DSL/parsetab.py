@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'ACID_BASE ALGEBRAIC ANALYZE AQUEOUS ARROW ASSIGN BALANCE CARET CATALYST COMBUSTION COMMA COMPOUND DECOMPOSITION DOUBLE_REPLACEMENT ELEMENT ELEMENT_SYMBOL EMPIRICAL_FORMULA ENTHALPY ENTROPY EQUALS EQUILIBRIUM FLOAT FOR GAS GAS_FORMATION GIBBS_ENERGY HALF_REACTION HEAT IDENTIFIER INTEGER LBRACE LBRACKET LIMITING_REAGENT LIQUID LPAREN MOLARITY MOLAR_MASS MOLECULAR_FORMULA NEGATIVE NORMALITY OF OXIDATION_NUMBER OXIDATION_STATES PERCENT_YIELD PH PLUS POSITIVE PRECIPITATION PREDICT PRESSURE QUERY RBRACE RBRACKET REACTION REDOX RESONANCE_ARROW REVERSIBLE_ARROW RPAREN SEMICOLON SINGLE_REPLACEMENT SOLID STRING TEMPERATURE TIME WITH YIELDprogram : statement_liststatement_list : statement SEMICOLON statement_list\n                     | statement SEMICOLONstatement : balance_statement\n                 | predict_statementbalance_statement : BALANCE reaction_exprpredict_statement : PREDICT reaction_exprreaction_expr : reactants_expr ARROW products_exprreactants_expr : chemical_term_listproducts_expr : chemical_term_listchemical_term_list : chemical_term PLUS chemical_term_list\n                          | chemical_termchemical_term : INTEGER molecule\n                     | moleculemolecule : molecule_part molecule\n                | molecule_partmolecule_part : element_group\n                     | LPAREN molecule RPAREN INTEGERelement_group : ELEMENT_SYMBOL INTEGER\n                     | ELEMENT_SYMBOL'
+_lr_signature = 'ACID_BASE ALGEBRAIC ANALYZE AQUEOUS ARROW ASSIGN BALANCE CARET CATALYST COMBUSTION COMMA COMPOUND DECOMPOSITION DOUBLE_REPLACEMENT ELEMENT ELEMENT_SYMBOL EMPIRICAL_FORMULA ENTHALPY ENTROPY EQUALS EQUILIBRIUM FLOAT FOR GAS GAS_FORMATION GIBBS_ENERGY HALF_REACTION HEAT IDENTIFIER INTEGER LBRACE LBRACKET LIMITING_REAGENT LIQUID LPAREN MOLARITY MOLAR_MASS MOLECULAR_FORMULA NEGATIVE NORMALITY OF OXIDATION_NUMBER OXIDATION_STATES PERCENT_YIELD PH PLUS POSITIVE PRECIPITATION PREDICT PRESSURE QUERY RBRACE RBRACKET REACTION REDOX RESONANCE_ARROW REVERSIBLE_ARROW RPAREN SEMICOLON SINGLE_REPLACEMENT SOLID STRING TEMPERATURE TIME WITH YIELDprogram : statement_liststatement_list : statement SEMICOLON statement_list\n                     | statement SEMICOLONstatement : balance_statement\n                 | predict_statementbalance_statement : BALANCE reaction_exprpredict_statement : PREDICT reactants_exprreaction_expr : reactants_expr ARROW products_exprreactants_expr : chemical_term_listproducts_expr : chemical_term_listchemical_term_list : chemical_term PLUS chemical_term_list\n                          | chemical_termchemical_term : INTEGER molecule\n                     | moleculemolecule : molecule_part molecule\n                | molecule_partmolecule_part : element_group\n                     | LPAREN molecule RPAREN INTEGERelement_group : ELEMENT_SYMBOL INTEGER\n                     | ELEMENT_SYMBOL'
     
-_lr_action_items = {'BALANCE':([0,8,],[6,6,]),'PREDICT':([0,8,],[7,7,]),'$end':([1,2,8,20,],[0,-1,-3,-2,]),'SEMICOLON':([3,4,5,9,12,14,15,16,18,19,23,24,26,27,28,29,31,],[8,-4,-5,-6,-12,-14,-16,-17,-20,-7,-13,-15,-19,-8,-10,-11,-18,]),'INTEGER':([6,7,18,21,22,30,],[13,13,26,13,13,31,]),'LPAREN':([6,7,13,15,16,17,18,21,22,26,31,],[17,17,17,17,-17,17,-20,17,17,-19,-18,]),'ELEMENT_SYMBOL':([6,7,13,15,16,17,18,21,22,26,31,],[18,18,18,18,-17,18,-20,18,18,-19,-18,]),'ARROW':([10,11,12,14,15,16,18,23,24,26,29,31,],[21,-9,-12,-14,-16,-17,-20,-13,-15,-19,-11,-18,]),'PLUS':([12,14,15,16,18,23,24,26,31,],[22,-14,-16,-17,-20,-13,-15,-19,-18,]),'RPAREN':([15,16,18,24,25,26,31,],[-16,-17,-20,-15,30,-19,-18,]),}
+_lr_action_items = {'BALANCE':([0,8,],[6,6,]),'PREDICT':([0,8,],[7,7,]),'$end':([1,2,8,20,],[0,-1,-3,-2,]),'SEMICOLON':([3,4,5,9,11,12,14,15,16,18,19,23,24,26,27,28,29,31,],[8,-4,-5,-6,-9,-12,-14,-16,-17,-20,-7,-13,-15,-19,-8,-10,-11,-18,]),'INTEGER':([6,7,18,21,22,30,],[13,13,26,13,13,31,]),'LPAREN':([6,7,13,15,16,17,18,21,22,26,31,],[17,17,17,17,-17,17,-20,17,17,-19,-18,]),'ELEMENT_SYMBOL':([6,7,13,15,16,17,18,21,22,26,31,],[18,18,18,18,-17,18,-20,18,18,-19,-18,]),'ARROW':([10,11,12,14,15,16,18,23,24,26,29,31,],[21,-9,-12,-14,-16,-17,-20,-13,-15,-19,-11,-18,]),'PLUS':([12,14,15,16,18,23,24,26,31,],[22,-14,-16,-17,-20,-13,-15,-19,-18,]),'RPAREN':([15,16,18,24,25,26,31,],[-16,-17,-20,-15,30,-19,-18,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'program':([0,],[1,]),'statement_list':([0,8,],[2,20,]),'statement':([0,8,],[3,3,]),'balance_statement':([0,8,],[4,4,]),'predict_statement':([0,8,],[5,5,]),'reaction_expr':([6,7,],[9,19,]),'reactants_expr':([6,7,],[10,10,]),'chemical_term_list':([6,7,21,22,],[11,11,28,29,]),'chemical_term':([6,7,21,22,],[12,12,12,12,]),'molecule':([6,7,13,15,17,21,22,],[14,14,23,24,25,14,14,]),'molecule_part':([6,7,13,15,17,21,22,],[15,15,15,15,15,15,15,]),'element_group':([6,7,13,15,17,21,22,],[16,16,16,16,16,16,16,]),'products_expr':([21,],[27,]),}
+_lr_goto_items = {'program':([0,],[1,]),'statement_list':([0,8,],[2,20,]),'statement':([0,8,],[3,3,]),'balance_statement':([0,8,],[4,4,]),'predict_statement':([0,8,],[5,5,]),'reaction_expr':([6,],[9,]),'reactants_expr':([6,7,],[10,19,]),'chemical_term_list':([6,7,21,22,],[11,11,28,29,]),'chemical_term':([6,7,21,22,],[12,12,12,12,]),'molecule':([6,7,13,15,17,21,22,],[14,14,23,24,25,14,14,]),'molecule_part':([6,7,13,15,17,21,22,],[15,15,15,15,15,15,15,]),'element_group':([6,7,13,15,17,21,22,],[16,16,16,16,16,16,16,]),'products_expr':([21,],[27,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -33,18 +33,18 @@ _lr_productions = [
   ('statement -> balance_statement','statement',1,'p_statement','parser.py',22),
   ('statement -> predict_statement','statement',1,'p_statement','parser.py',23),
   ('balance_statement -> BALANCE reaction_expr','balance_statement',2,'p_balance_statement','parser.py',27),
-  ('predict_statement -> PREDICT reaction_expr','predict_statement',2,'p_predict_statement','parser.py',31),
-  ('reaction_expr -> reactants_expr ARROW products_expr','reaction_expr',3,'p_reaction_expr','parser.py',35),
-  ('reactants_expr -> chemical_term_list','reactants_expr',1,'p_reactants_expr','parser.py',39),
-  ('products_expr -> chemical_term_list','products_expr',1,'p_products_expr','parser.py',43),
-  ('chemical_term_list -> chemical_term PLUS chemical_term_list','chemical_term_list',3,'p_chemical_term_list','parser.py',47),
-  ('chemical_term_list -> chemical_term','chemical_term_list',1,'p_chemical_term_list','parser.py',48),
-  ('chemical_term -> INTEGER molecule','chemical_term',2,'p_chemical_term','parser.py',52),
-  ('chemical_term -> molecule','chemical_term',1,'p_chemical_term','parser.py',53),
-  ('molecule -> molecule_part molecule','molecule',2,'p_molecule','parser.py',62),
-  ('molecule -> molecule_part','molecule',1,'p_molecule','parser.py',63),
-  ('molecule_part -> element_group','molecule_part',1,'p_molecule_part','parser.py',72),
-  ('molecule_part -> LPAREN molecule RPAREN INTEGER','molecule_part',4,'p_molecule_part','parser.py',73),
-  ('element_group -> ELEMENT_SYMBOL INTEGER','element_group',2,'p_element_group','parser.py',86),
-  ('element_group -> ELEMENT_SYMBOL','element_group',1,'p_element_group','parser.py',87),
+  ('predict_statement -> PREDICT reactants_expr','predict_statement',2,'p_predict_statement','parser.py',31),
+  ('reaction_expr -> reactants_expr ARROW products_expr','reaction_expr',3,'p_reaction_expr','parser.py',37),
+  ('reactants_expr -> chemical_term_list','reactants_expr',1,'p_reactants_expr','parser.py',41),
+  ('products_expr -> chemical_term_list','products_expr',1,'p_products_expr','parser.py',45),
+  ('chemical_term_list -> chemical_term PLUS chemical_term_list','chemical_term_list',3,'p_chemical_term_list','parser.py',49),
+  ('chemical_term_list -> chemical_term','chemical_term_list',1,'p_chemical_term_list','parser.py',50),
+  ('chemical_term -> INTEGER molecule','chemical_term',2,'p_chemical_term','parser.py',54),
+  ('chemical_term -> molecule','chemical_term',1,'p_chemical_term','parser.py',55),
+  ('molecule -> molecule_part molecule','molecule',2,'p_molecule','parser.py',64),
+  ('molecule -> molecule_part','molecule',1,'p_molecule','parser.py',65),
+  ('molecule_part -> element_group','molecule_part',1,'p_molecule_part','parser.py',74),
+  ('molecule_part -> LPAREN molecule RPAREN INTEGER','molecule_part',4,'p_molecule_part','parser.py',75),
+  ('element_group -> ELEMENT_SYMBOL INTEGER','element_group',2,'p_element_group','parser.py',88),
+  ('element_group -> ELEMENT_SYMBOL','element_group',1,'p_element_group','parser.py',89),
 ]
