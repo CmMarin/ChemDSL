@@ -12,14 +12,20 @@ from DSL.utils.error_handler import ErrorHandler
 class Evaluator:
     def __init__(self):
         self.env = Environment()
+        from DSL.utils.error_handler import ErrorHandler
         self.error_handler = ErrorHandler()
 
     def evaluate(self, node):
         try:
+            # Check if node is None before proceeding
+            if node is None:
+                return None
+
             method_name = 'eval_' + node.__class__.__name__
             evaluator = getattr(self, method_name, self.generic_eval)
             return evaluator(node)
         except Exception as e:
+            # Use the updated error handler
             self.error_handler.add_error(str(e))
             return f"Evaluation error: {str(e)}"
 
@@ -34,58 +40,77 @@ class Evaluator:
                 results.append(result)
         return "\n".join(str(r) for r in results)
 
+    # In evaluator_dsl.py
+    def format_formula(self, formula: str) -> str:
+        """Convert formulas like 'CuN2O6' to 'Cu(NO3)2'."""
+        from collections import defaultdict
+        import re
+
+        # Split formula into elements and counts (e.g., [('Cu', 1), ('N', 2), ('O', 6)])
+        elements = re.findall(r'([A-Z][a-z]*)(\d*)', formula)
+        elements = [(elem, int(count) if count else 1) for elem, count in elements]
+
+        # Find the greatest common divisor (GCD) of counts
+        counts = [count for _, count in elements[1:]]  # Skip the first element (e.g., Cu)
+        if not counts:
+            return formula
+
+        from math import gcd
+        common_divisor = counts[0]
+        for count in counts[1:]:
+            common_divisor = gcd(common_divisor, count)
+
+        # If a common divisor exists, format as a subgroup
+        if common_divisor > 1:
+            subgroup = "".join([f"{elem}{count // common_divisor}" for elem, count in elements[1:]])
+            return f"{elements[0][0]}({subgroup}){common_divisor}"
+        return formula
+
     def eval_BalanceStatementNode(self, node):
         try:
-            # Evaluate the reaction expression to get reactants and products
             reaction = self.eval_ReactionExpressionNode(node.reaction_expr)
+            reactants = [(coeff, compound) for coeff, compound in reaction.reactants]
+            products = [(coeff, compound) for coeff, compound in reaction.products]
+            coeffs = balancer.balance_reaction(reactants, products)
+            if not coeffs:
+                return "Could not balance reaction."
 
-            # Use the balancer to compute coefficients
-            coeffs = balancer.balance_reaction(reaction.reactants, reaction.products)
-
-            if coeffs is None:
-                return "Could not balance reaction. The reaction may be invalid or too complex."
-
-            # Construct a balanced reaction string
-            n_reactants = len(reaction.reactants)
+            # Format formulas with parentheses
             balanced_reactants = []
-            balanced_products = []
-
-            for i, (orig_coeff, compound) in enumerate(reaction.reactants):
+            for i, (orig_coeff, compound) in enumerate(reactants):
                 new_coeff = coeffs[i] * orig_coeff
-                if new_coeff == 1:
-                    balanced_reactants.append(f"{compound.formula}")
-                else:
-                    balanced_reactants.append(f"{new_coeff}{compound.formula}")
+                formula = self.format_formula(compound.formula)  # Apply formatting
+                balanced_reactants.append(f"{new_coeff if new_coeff != 1 else ''}{formula}")
 
-            for j, (orig_coeff, compound) in enumerate(reaction.products):
-                new_coeff = coeffs[n_reactants + j] * orig_coeff
-                if new_coeff == 1:
-                    balanced_products.append(f"{compound.formula}")
-                else:
-                    balanced_products.append(f"{new_coeff}{compound.formula}")
+            balanced_products = []
+            for j, (orig_coeff, compound) in enumerate(products):
+                new_coeff = coeffs[len(reactants) + j] * orig_coeff
+                formula = self.format_formula(compound.formula)  # Apply formatting
+                balanced_products.append(f"{new_coeff if new_coeff != 1 else ''}{formula}")
 
-            reactants_str = " + ".join(balanced_reactants)
-            products_str = " + ".join(balanced_products)
-
-            return f"Balanced Reaction: {reactants_str} -> {products_str}"
+            return f"Balanced Reaction: {' + '.join(balanced_reactants)} → {' + '.join(balanced_products)}"
 
         except Exception as e:
             self.error_handler.add_error(f"Balance error: {str(e)}")
-            return f"Could not balance reaction: {str(e)}"
+            return f"Balance failed: {str(e)}"
 
     def eval_PredictStatementNode(self, node):
         try:
             # Evaluate the reaction expression to get reactants
-            reaction = self.eval_ReactionExpressionNode(node.reaction_expr)
+            reaction_expr = self.eval_ReactionExpressionNode(node.reaction_expr)
 
             # Extract compounds from reactants (ignoring coefficients)
-            reactant_compounds = [r[1] for r in reaction.reactants]
+            reactant_compounds = [r[1] for r in reaction_expr.reactants]
 
             # Try to predict the products
-            predicted = reactions.predict_reaction(reactant_compounds)
+            predicted_reaction = reactions.predict_reaction(reactant_compounds)
 
-            if predicted:
-                return f"Predicted Reaction: {predicted}"
+            if predicted_reaction:
+                # Store the predicted reaction in the environment for later reference
+                reaction_str = str(predicted_reaction)
+                self.env.set('last_predicted_reaction', reaction_str)
+
+                return f"Predicted Reaction: {reaction_str}"
             else:
                 return "Could not predict reaction products."
 

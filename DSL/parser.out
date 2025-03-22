@@ -77,11 +77,12 @@ Rule 11    chemical_term_list -> chemical_term PLUS chemical_term_list
 Rule 12    chemical_term_list -> chemical_term
 Rule 13    chemical_term -> INTEGER molecule
 Rule 14    chemical_term -> molecule
-Rule 15    molecule -> LPAREN molecule RPAREN INTEGER
-Rule 16    molecule -> molecule element_group
-Rule 17    molecule -> element_group
-Rule 18    element_group -> ELEMENT_SYMBOL INTEGER
-Rule 19    element_group -> ELEMENT_SYMBOL
+Rule 15    molecule -> molecule_part molecule
+Rule 16    molecule -> molecule_part
+Rule 17    molecule_part -> element_group
+Rule 18    molecule_part -> LPAREN molecule RPAREN INTEGER
+Rule 19    element_group -> ELEMENT_SYMBOL INTEGER
+Rule 20    element_group -> ELEMENT_SYMBOL
 
 Terminals, with rules where they appear
 
@@ -100,7 +101,7 @@ COMPOUND             :
 DECOMPOSITION        : 
 DOUBLE_REPLACEMENT   : 
 ELEMENT              : 
-ELEMENT_SYMBOL       : 18 19
+ELEMENT_SYMBOL       : 19 20
 EMPIRICAL_FORMULA    : 
 ENTHALPY             : 
 ENTROPY              : 
@@ -114,12 +115,12 @@ GIBBS_ENERGY         :
 HALF_REACTION        : 
 HEAT                 : 
 IDENTIFIER           : 
-INTEGER              : 13 15 18
+INTEGER              : 13 18 19
 LBRACE               : 
 LBRACKET             : 
 LIMITING_REAGENT     : 
 LIQUID               : 
-LPAREN               : 15
+LPAREN               : 18
 MOLARITY             : 
 MOLAR_MASS           : 
 MOLECULAR_FORMULA    : 
@@ -142,7 +143,7 @@ REACTION             :
 REDOX                : 
 RESONANCE_ARROW      : 
 REVERSIBLE_ARROW     : 
-RPAREN               : 15
+RPAREN               : 18
 SEMICOLON            : 2 3
 SINGLE_REPLACEMENT   : 
 SOLID                : 
@@ -158,8 +159,9 @@ Nonterminals, with rules where they appear
 balance_statement    : 4
 chemical_term        : 11 12
 chemical_term_list   : 9 10 11
-element_group        : 16 17
-molecule             : 13 14 15 16
+element_group        : 17
+molecule             : 13 14 15 18
+molecule_part        : 15 16
 predict_statement    : 5
 products_expr        : 8
 program              : 0
@@ -234,21 +236,23 @@ state 6
     (12) chemical_term_list -> . chemical_term
     (13) chemical_term -> . INTEGER molecule
     (14) chemical_term -> . molecule
-    (15) molecule -> . LPAREN molecule RPAREN INTEGER
-    (16) molecule -> . molecule element_group
-    (17) molecule -> . element_group
-    (18) element_group -> . ELEMENT_SYMBOL INTEGER
-    (19) element_group -> . ELEMENT_SYMBOL
+    (15) molecule -> . molecule_part molecule
+    (16) molecule -> . molecule_part
+    (17) molecule_part -> . element_group
+    (18) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (19) element_group -> . ELEMENT_SYMBOL INTEGER
+    (20) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 13
-    LPAREN          shift and go to state 15
-    ELEMENT_SYMBOL  shift and go to state 17
+    LPAREN          shift and go to state 17
+    ELEMENT_SYMBOL  shift and go to state 18
 
     reaction_expr                  shift and go to state 9
     reactants_expr                 shift and go to state 10
     chemical_term_list             shift and go to state 11
     chemical_term                  shift and go to state 12
     molecule                       shift and go to state 14
+    molecule_part                  shift and go to state 15
     element_group                  shift and go to state 16
 
 state 7
@@ -260,21 +264,23 @@ state 7
     (12) chemical_term_list -> . chemical_term
     (13) chemical_term -> . INTEGER molecule
     (14) chemical_term -> . molecule
-    (15) molecule -> . LPAREN molecule RPAREN INTEGER
-    (16) molecule -> . molecule element_group
-    (17) molecule -> . element_group
-    (18) element_group -> . ELEMENT_SYMBOL INTEGER
-    (19) element_group -> . ELEMENT_SYMBOL
+    (15) molecule -> . molecule_part molecule
+    (16) molecule -> . molecule_part
+    (17) molecule_part -> . element_group
+    (18) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (19) element_group -> . ELEMENT_SYMBOL INTEGER
+    (20) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 13
-    LPAREN          shift and go to state 15
-    ELEMENT_SYMBOL  shift and go to state 17
+    LPAREN          shift and go to state 17
+    ELEMENT_SYMBOL  shift and go to state 18
 
-    reaction_expr                  shift and go to state 18
+    reaction_expr                  shift and go to state 19
     reactants_expr                 shift and go to state 10
     chemical_term_list             shift and go to state 11
     chemical_term                  shift and go to state 12
     molecule                       shift and go to state 14
+    molecule_part                  shift and go to state 15
     element_group                  shift and go to state 16
 
 state 8
@@ -293,7 +299,7 @@ state 8
     PREDICT         shift and go to state 7
 
     statement                      shift and go to state 3
-    statement_list                 shift and go to state 19
+    statement_list                 shift and go to state 20
     balance_statement              shift and go to state 4
     predict_statement              shift and go to state 5
 
@@ -308,7 +314,7 @@ state 10
 
     (8) reaction_expr -> reactants_expr . ARROW products_expr
 
-    ARROW           shift and go to state 20
+    ARROW           shift and go to state 21
 
 
 state 11
@@ -323,7 +329,7 @@ state 12
     (11) chemical_term_list -> chemical_term . PLUS chemical_term_list
     (12) chemical_term_list -> chemical_term .
 
-    PLUS            shift and go to state 21
+    PLUS            shift and go to state 22
     ARROW           reduce using rule 12 (chemical_term_list -> chemical_term .)
     SEMICOLON       reduce using rule 12 (chemical_term_list -> chemical_term .)
 
@@ -331,86 +337,109 @@ state 12
 state 13
 
     (13) chemical_term -> INTEGER . molecule
-    (15) molecule -> . LPAREN molecule RPAREN INTEGER
-    (16) molecule -> . molecule element_group
-    (17) molecule -> . element_group
-    (18) element_group -> . ELEMENT_SYMBOL INTEGER
-    (19) element_group -> . ELEMENT_SYMBOL
+    (15) molecule -> . molecule_part molecule
+    (16) molecule -> . molecule_part
+    (17) molecule_part -> . element_group
+    (18) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (19) element_group -> . ELEMENT_SYMBOL INTEGER
+    (20) element_group -> . ELEMENT_SYMBOL
 
-    LPAREN          shift and go to state 15
-    ELEMENT_SYMBOL  shift and go to state 17
+    LPAREN          shift and go to state 17
+    ELEMENT_SYMBOL  shift and go to state 18
 
-    molecule                       shift and go to state 22
+    molecule                       shift and go to state 23
+    molecule_part                  shift and go to state 15
     element_group                  shift and go to state 16
 
 state 14
 
     (14) chemical_term -> molecule .
-    (16) molecule -> molecule . element_group
-    (18) element_group -> . ELEMENT_SYMBOL INTEGER
-    (19) element_group -> . ELEMENT_SYMBOL
 
     PLUS            reduce using rule 14 (chemical_term -> molecule .)
     ARROW           reduce using rule 14 (chemical_term -> molecule .)
     SEMICOLON       reduce using rule 14 (chemical_term -> molecule .)
-    ELEMENT_SYMBOL  shift and go to state 17
 
-    element_group                  shift and go to state 23
 
 state 15
 
-    (15) molecule -> LPAREN . molecule RPAREN INTEGER
-    (15) molecule -> . LPAREN molecule RPAREN INTEGER
-    (16) molecule -> . molecule element_group
-    (17) molecule -> . element_group
-    (18) element_group -> . ELEMENT_SYMBOL INTEGER
-    (19) element_group -> . ELEMENT_SYMBOL
+    (15) molecule -> molecule_part . molecule
+    (16) molecule -> molecule_part .
+    (15) molecule -> . molecule_part molecule
+    (16) molecule -> . molecule_part
+    (17) molecule_part -> . element_group
+    (18) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (19) element_group -> . ELEMENT_SYMBOL INTEGER
+    (20) element_group -> . ELEMENT_SYMBOL
 
-    LPAREN          shift and go to state 15
-    ELEMENT_SYMBOL  shift and go to state 17
+    PLUS            reduce using rule 16 (molecule -> molecule_part .)
+    ARROW           reduce using rule 16 (molecule -> molecule_part .)
+    SEMICOLON       reduce using rule 16 (molecule -> molecule_part .)
+    RPAREN          reduce using rule 16 (molecule -> molecule_part .)
+    LPAREN          shift and go to state 17
+    ELEMENT_SYMBOL  shift and go to state 18
 
+    molecule_part                  shift and go to state 15
     molecule                       shift and go to state 24
     element_group                  shift and go to state 16
 
 state 16
 
-    (17) molecule -> element_group .
+    (17) molecule_part -> element_group .
 
-    ELEMENT_SYMBOL  reduce using rule 17 (molecule -> element_group .)
-    PLUS            reduce using rule 17 (molecule -> element_group .)
-    ARROW           reduce using rule 17 (molecule -> element_group .)
-    SEMICOLON       reduce using rule 17 (molecule -> element_group .)
-    RPAREN          reduce using rule 17 (molecule -> element_group .)
+    LPAREN          reduce using rule 17 (molecule_part -> element_group .)
+    ELEMENT_SYMBOL  reduce using rule 17 (molecule_part -> element_group .)
+    PLUS            reduce using rule 17 (molecule_part -> element_group .)
+    ARROW           reduce using rule 17 (molecule_part -> element_group .)
+    SEMICOLON       reduce using rule 17 (molecule_part -> element_group .)
+    RPAREN          reduce using rule 17 (molecule_part -> element_group .)
 
 
 state 17
 
-    (18) element_group -> ELEMENT_SYMBOL . INTEGER
-    (19) element_group -> ELEMENT_SYMBOL .
+    (18) molecule_part -> LPAREN . molecule RPAREN INTEGER
+    (15) molecule -> . molecule_part molecule
+    (16) molecule -> . molecule_part
+    (17) molecule_part -> . element_group
+    (18) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (19) element_group -> . ELEMENT_SYMBOL INTEGER
+    (20) element_group -> . ELEMENT_SYMBOL
 
-    INTEGER         shift and go to state 25
-    ELEMENT_SYMBOL  reduce using rule 19 (element_group -> ELEMENT_SYMBOL .)
-    PLUS            reduce using rule 19 (element_group -> ELEMENT_SYMBOL .)
-    ARROW           reduce using rule 19 (element_group -> ELEMENT_SYMBOL .)
-    SEMICOLON       reduce using rule 19 (element_group -> ELEMENT_SYMBOL .)
-    RPAREN          reduce using rule 19 (element_group -> ELEMENT_SYMBOL .)
+    LPAREN          shift and go to state 17
+    ELEMENT_SYMBOL  shift and go to state 18
 
+    molecule                       shift and go to state 25
+    molecule_part                  shift and go to state 15
+    element_group                  shift and go to state 16
 
 state 18
+
+    (19) element_group -> ELEMENT_SYMBOL . INTEGER
+    (20) element_group -> ELEMENT_SYMBOL .
+
+    INTEGER         shift and go to state 26
+    LPAREN          reduce using rule 20 (element_group -> ELEMENT_SYMBOL .)
+    ELEMENT_SYMBOL  reduce using rule 20 (element_group -> ELEMENT_SYMBOL .)
+    PLUS            reduce using rule 20 (element_group -> ELEMENT_SYMBOL .)
+    ARROW           reduce using rule 20 (element_group -> ELEMENT_SYMBOL .)
+    SEMICOLON       reduce using rule 20 (element_group -> ELEMENT_SYMBOL .)
+    RPAREN          reduce using rule 20 (element_group -> ELEMENT_SYMBOL .)
+
+
+state 19
 
     (7) predict_statement -> PREDICT reaction_expr .
 
     SEMICOLON       reduce using rule 7 (predict_statement -> PREDICT reaction_expr .)
 
 
-state 19
+state 20
 
     (2) statement_list -> statement SEMICOLON statement_list .
 
     $end            reduce using rule 2 (statement_list -> statement SEMICOLON statement_list .)
 
 
-state 20
+state 21
 
     (8) reaction_expr -> reactants_expr ARROW . products_expr
     (10) products_expr -> . chemical_term_list
@@ -418,107 +447,101 @@ state 20
     (12) chemical_term_list -> . chemical_term
     (13) chemical_term -> . INTEGER molecule
     (14) chemical_term -> . molecule
-    (15) molecule -> . LPAREN molecule RPAREN INTEGER
-    (16) molecule -> . molecule element_group
-    (17) molecule -> . element_group
-    (18) element_group -> . ELEMENT_SYMBOL INTEGER
-    (19) element_group -> . ELEMENT_SYMBOL
+    (15) molecule -> . molecule_part molecule
+    (16) molecule -> . molecule_part
+    (17) molecule_part -> . element_group
+    (18) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (19) element_group -> . ELEMENT_SYMBOL INTEGER
+    (20) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 13
-    LPAREN          shift and go to state 15
-    ELEMENT_SYMBOL  shift and go to state 17
+    LPAREN          shift and go to state 17
+    ELEMENT_SYMBOL  shift and go to state 18
 
-    products_expr                  shift and go to state 26
-    chemical_term_list             shift and go to state 27
+    products_expr                  shift and go to state 27
+    chemical_term_list             shift and go to state 28
     chemical_term                  shift and go to state 12
     molecule                       shift and go to state 14
+    molecule_part                  shift and go to state 15
     element_group                  shift and go to state 16
 
-state 21
+state 22
 
     (11) chemical_term_list -> chemical_term PLUS . chemical_term_list
     (11) chemical_term_list -> . chemical_term PLUS chemical_term_list
     (12) chemical_term_list -> . chemical_term
     (13) chemical_term -> . INTEGER molecule
     (14) chemical_term -> . molecule
-    (15) molecule -> . LPAREN molecule RPAREN INTEGER
-    (16) molecule -> . molecule element_group
-    (17) molecule -> . element_group
-    (18) element_group -> . ELEMENT_SYMBOL INTEGER
-    (19) element_group -> . ELEMENT_SYMBOL
+    (15) molecule -> . molecule_part molecule
+    (16) molecule -> . molecule_part
+    (17) molecule_part -> . element_group
+    (18) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (19) element_group -> . ELEMENT_SYMBOL INTEGER
+    (20) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 13
-    LPAREN          shift and go to state 15
-    ELEMENT_SYMBOL  shift and go to state 17
+    LPAREN          shift and go to state 17
+    ELEMENT_SYMBOL  shift and go to state 18
 
     chemical_term                  shift and go to state 12
-    chemical_term_list             shift and go to state 28
+    chemical_term_list             shift and go to state 29
     molecule                       shift and go to state 14
+    molecule_part                  shift and go to state 15
     element_group                  shift and go to state 16
 
-state 22
+state 23
 
     (13) chemical_term -> INTEGER molecule .
-    (16) molecule -> molecule . element_group
-    (18) element_group -> . ELEMENT_SYMBOL INTEGER
-    (19) element_group -> . ELEMENT_SYMBOL
 
     PLUS            reduce using rule 13 (chemical_term -> INTEGER molecule .)
     ARROW           reduce using rule 13 (chemical_term -> INTEGER molecule .)
     SEMICOLON       reduce using rule 13 (chemical_term -> INTEGER molecule .)
-    ELEMENT_SYMBOL  shift and go to state 17
-
-    element_group                  shift and go to state 23
-
-state 23
-
-    (16) molecule -> molecule element_group .
-
-    ELEMENT_SYMBOL  reduce using rule 16 (molecule -> molecule element_group .)
-    PLUS            reduce using rule 16 (molecule -> molecule element_group .)
-    ARROW           reduce using rule 16 (molecule -> molecule element_group .)
-    SEMICOLON       reduce using rule 16 (molecule -> molecule element_group .)
-    RPAREN          reduce using rule 16 (molecule -> molecule element_group .)
 
 
 state 24
 
-    (15) molecule -> LPAREN molecule . RPAREN INTEGER
-    (16) molecule -> molecule . element_group
-    (18) element_group -> . ELEMENT_SYMBOL INTEGER
-    (19) element_group -> . ELEMENT_SYMBOL
+    (15) molecule -> molecule_part molecule .
 
-    RPAREN          shift and go to state 29
-    ELEMENT_SYMBOL  shift and go to state 17
+    PLUS            reduce using rule 15 (molecule -> molecule_part molecule .)
+    ARROW           reduce using rule 15 (molecule -> molecule_part molecule .)
+    SEMICOLON       reduce using rule 15 (molecule -> molecule_part molecule .)
+    RPAREN          reduce using rule 15 (molecule -> molecule_part molecule .)
 
-    element_group                  shift and go to state 23
 
 state 25
 
-    (18) element_group -> ELEMENT_SYMBOL INTEGER .
+    (18) molecule_part -> LPAREN molecule . RPAREN INTEGER
 
-    ELEMENT_SYMBOL  reduce using rule 18 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    PLUS            reduce using rule 18 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    ARROW           reduce using rule 18 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    SEMICOLON       reduce using rule 18 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    RPAREN          reduce using rule 18 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    RPAREN          shift and go to state 30
 
 
 state 26
+
+    (19) element_group -> ELEMENT_SYMBOL INTEGER .
+
+    LPAREN          reduce using rule 19 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    ELEMENT_SYMBOL  reduce using rule 19 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    PLUS            reduce using rule 19 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    ARROW           reduce using rule 19 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    SEMICOLON       reduce using rule 19 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    RPAREN          reduce using rule 19 (element_group -> ELEMENT_SYMBOL INTEGER .)
+
+
+state 27
 
     (8) reaction_expr -> reactants_expr ARROW products_expr .
 
     SEMICOLON       reduce using rule 8 (reaction_expr -> reactants_expr ARROW products_expr .)
 
 
-state 27
+state 28
 
     (10) products_expr -> chemical_term_list .
 
     SEMICOLON       reduce using rule 10 (products_expr -> chemical_term_list .)
 
 
-state 28
+state 29
 
     (11) chemical_term_list -> chemical_term PLUS chemical_term_list .
 
@@ -526,20 +549,21 @@ state 28
     SEMICOLON       reduce using rule 11 (chemical_term_list -> chemical_term PLUS chemical_term_list .)
 
 
-state 29
-
-    (15) molecule -> LPAREN molecule RPAREN . INTEGER
-
-    INTEGER         shift and go to state 30
-
-
 state 30
 
-    (15) molecule -> LPAREN molecule RPAREN INTEGER .
+    (18) molecule_part -> LPAREN molecule RPAREN . INTEGER
 
-    ELEMENT_SYMBOL  reduce using rule 15 (molecule -> LPAREN molecule RPAREN INTEGER .)
-    PLUS            reduce using rule 15 (molecule -> LPAREN molecule RPAREN INTEGER .)
-    ARROW           reduce using rule 15 (molecule -> LPAREN molecule RPAREN INTEGER .)
-    SEMICOLON       reduce using rule 15 (molecule -> LPAREN molecule RPAREN INTEGER .)
-    RPAREN          reduce using rule 15 (molecule -> LPAREN molecule RPAREN INTEGER .)
+    INTEGER         shift and go to state 31
+
+
+state 31
+
+    (18) molecule_part -> LPAREN molecule RPAREN INTEGER .
+
+    LPAREN          reduce using rule 18 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    ELEMENT_SYMBOL  reduce using rule 18 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    PLUS            reduce using rule 18 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    ARROW           reduce using rule 18 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    SEMICOLON       reduce using rule 18 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    RPAREN          reduce using rule 18 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
 
