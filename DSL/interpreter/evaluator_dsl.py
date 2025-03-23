@@ -189,6 +189,69 @@ class Evaluator:
             self.error_handler.add_error(f"Analysis error: {str(e)}")
             return f"Analysis Error: {str(e)}"
 
+    def eval_ReactionTypeNode(self, node):
+        """Evaluate a reaction type statement."""
+        reaction_type = node.reaction_type
+        target = node.target
+
+        # Define common examples for each reaction type
+        common_examples = {
+            'COMBUSTION': {
+                'syntax': 'Fuel + O2 -> CO2 + H2O',
+                'example': 'CH4 + 2O2 -> CO2 + 2H2O'
+            },
+            'DECOMPOSITION': {
+                'syntax': 'Compound -> Simpler Compounds',
+                'example': '2H2O -> 2H2 + O2'
+            },
+            'SINGLE_REPLACEMENT': {
+                'syntax': 'A + BC -> AC + B',
+                'example': 'Zn + 2HCl -> ZnCl2 + H2'
+            },
+            'DOUBLE_REPLACEMENT': {
+                'syntax': 'AB + CD -> AD + CB',
+                'example': 'AgNO3 + NaCl -> AgCl + NaNO3'
+            },
+            'ACID_BASE': {
+                'syntax': 'Acid + Base -> Salt + Water',
+                'example': 'HCl + NaOH -> NaCl + H2O'
+            },
+            'PRECIPITATION': {
+                'syntax': 'Aqueous Solutions -> Solid Precipitate',
+                'example': 'Pb(NO3)2 + 2KI -> PbI2 + 2KNO3'
+            },
+            'GAS_FORMATION': {
+                'syntax': 'Reactants -> Gas + Other Products',
+                'example': '2HCl + Na2CO3 -> 2NaCl + H2O + CO2'
+            }
+        }
+
+        # If no target is provided, return the syntax and common example
+        if not target:
+            if reaction_type in common_examples:
+                return f"Reaction Type: {reaction_type}\nSyntax: {common_examples[reaction_type]['syntax']}\nExample: {common_examples[reaction_type]['example']}"
+            else:
+                return f"Unknown reaction type: {reaction_type}"
+
+        # If a target is provided, try to find an example with that target
+        target_formula = self.evaluate(target).formula
+        if reaction_type == 'COMBUSTION' and target_formula == 'CH4':
+            return "Example with CH4: CH4 + 2O2 -> CO2 + 2H2O"
+        elif reaction_type == 'DECOMPOSITION' and target_formula == 'H2O':
+            return "Example with H2O: 2H2O -> 2H2 + O2"
+        elif reaction_type == 'SINGLE_REPLACEMENT' and target_formula == 'Zn':
+            return "Example with Zn: Zn + 2HCl -> ZnCl2 + H2"
+        elif reaction_type == 'DOUBLE_REPLACEMENT' and target_formula == 'AgNO3':
+            return "Example with AgNO3: AgNO3 + NaCl -> AgCl + NaNO3"
+        elif reaction_type == 'ACID_BASE' and target_formula == 'HCl':
+            return "Example with HCl: HCl + NaOH -> NaCl + H2O"
+        elif reaction_type == 'PRECIPITATION' and target_formula == 'Pb(NO3)2':
+            return "Example with Pb(NO3)2: Pb(NO3)2 + 2KI -> PbI2 + 2KNO3"
+        elif reaction_type == 'GAS_FORMATION' and target_formula == 'Na2CO3':
+            return "Example with Na2CO3: 2HCl + Na2CO3 -> 2NaCl + H2O + CO2"
+        else:
+            return f"No specific example found for {reaction_type} with {target_formula}. Here's a common example:\n{common_examples[reaction_type]['example']}"
+
     def eval_ReactionExpressionNode(self, node):
         # Evaluate each term in reactants and products
         reactants = [self.evaluate(term) for term in node.reactants]

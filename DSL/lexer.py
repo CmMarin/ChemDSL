@@ -19,7 +19,7 @@ tokens = (
     'REDOX', 'ALGEBRAIC', 'HALF_REACTION', 'OXIDATION_NUMBER',
 
     # Reaction types
-    'COMBUSTION', 'DECOMPOSITION', 'SINGLE_REPLACEMENT', 'DOUBLE_REPLACEMENT',
+    'REACTION_TYPE','COMBUSTION', 'DECOMPOSITION', 'SINGLE_REPLACEMENT', 'DOUBLE_REPLACEMENT',
     'ACID_BASE', 'PRECIPITATION', 'GAS_FORMATION',
 
     # Analysis options
@@ -148,8 +148,9 @@ def t_INTEGER(t):
     return t
 
 def t_IDENTIFIER(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*'  # Allow underscores
-    t.type = keywords.get(t.value.lower(), 'IDENTIFIER')
+    r'[a-zA-Z_][a-zA-Z0-9_]*'
+    t.value = t.value.lower()  # Normalize to lowercase
+    t.type = keywords.get(t.value, 'IDENTIFIER')
     return t
 
 def t_FLOAT(t):

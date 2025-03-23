@@ -39,6 +39,17 @@ class PredictStatementNode(ASTNode):
     def __repr__(self):
         return f"Predict({self.reaction_expr})"
 
+class ReactionTypeNode(ASTNode):
+    """Represents a reaction type statement."""
+    def __init__(self, reaction_type, target=None):
+        self.reaction_type = reaction_type
+        self.target = target  # Optional: specific element or compound
+
+    def __repr__(self):
+        if self.target:
+            return f"ReactionTypeNode(type={self.reaction_type}, target={self.target})"
+        return f"ReactionTypeNode(type={self.reaction_type})"
+
 
 class ReactionExpressionNode(ASTNode):
     """Represents a chemical reaction expression (reactants -> products)."""

@@ -22,8 +22,11 @@ def p_statement_list(p):
 def p_statement(p):
     """statement : balance_statement
                  | predict_statement
-                 | analyze_statement"""
+                 | analyze_statement
+                 | reaction_type_statement"""
+    print(f"[Parser] Processing statement: {p[1]}")  # Debug print
     p[0] = p[1]
+
 
 def p_balance_statement(p):
     """balance_statement : BALANCE reaction_expr"""
@@ -46,6 +49,26 @@ def p_analyze_statement(p):
         else:
             raise SyntaxError(f"Invalid detail specifier: {p[4]}. Use 'all'.")
     p[0] = nodes.AnalyzeStatementNode(target=p[2], detail_level=detail_level)
+
+def p_reaction_type_statement(p):
+    """reaction_type_statement : COMBUSTION
+                               | DECOMPOSITION
+                               | SINGLE_REPLACEMENT
+                               | DOUBLE_REPLACEMENT
+                               | ACID_BASE
+                               | PRECIPITATION
+                               | GAS_FORMATION
+                               | COMBUSTION OF molecule
+                               | DECOMPOSITION OF molecule
+                               | SINGLE_REPLACEMENT OF molecule
+                               | DOUBLE_REPLACEMENT OF molecule
+                               | ACID_BASE OF molecule
+                               | PRECIPITATION OF molecule
+                               | GAS_FORMATION OF molecule"""
+    if len(p) == 2:
+        p[0] = nodes.ReactionTypeNode(p[1].upper(), None)  # e.g., p[1] = 'COMBUSTION'
+    else:
+        p[0] = nodes.ReactionTypeNode(p[1].upper(), p[3])  # e.g., p[1] = 'DECOMPOSITION', p[3] = molecule
 
 def p_reaction_expr(p):
     """reaction_expr : reactants_expr ARROW products_expr"""
