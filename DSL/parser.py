@@ -22,8 +22,12 @@ def p_statement_list(p):
 def p_statement(p):
     """statement : balance_statement
                  | predict_statement
-                 | analyze_statement"""
+                 | analyze_statement
+                 | reaction_type_statement
+                 | thermodynamic_statement
+                 | chemical_analysis_statement"""
     p[0] = p[1]
+
 
 def p_balance_statement(p):
     """balance_statement : BALANCE reaction_expr"""
@@ -31,10 +35,65 @@ def p_balance_statement(p):
     p[0] = nodes.BalanceStatementNode(p[2])
 
 def p_predict_statement(p):
-    """predict_statement : PREDICT reactants_expr"""
-    # Create a ReactionExpressionNode with reactants and empty products
-    reaction_expr = nodes.ReactionExpressionNode(reactants=p[2], products=[])
-    p[0] = nodes.PredictStatementNode(reaction_expr)
+    """predict_statement : PREDICT reaction_expr
+                         | PREDICT reaction_expr IF condition
+                         | PREDICT reactants_expr
+                         | PREDICT reactants_expr IF condition"""
+    if len(p) == 3:  # No condition (reactants + products OR reactants only)
+        if isinstance(p[2], nodes.ReactionExpressionNode):
+            # Explicit reaction (A -> B)
+            p[0] = nodes.ConditionalReactionNode(
+                reactants=p[2].reactants,
+                products=p[2].products,
+                condition=None
+            )
+        else:
+            # Reactants only (predict products)
+            p[0] = nodes.ConditionalReactionNode(
+                reactants=p[2],
+                products=[],
+                condition=None
+            )
+    else:  # With condition (len(p) == 5)
+        if isinstance(p[2], nodes.ReactionExpressionNode):
+            # Explicit reaction with condition (A -> B IF ...)
+            p[0] = nodes.ConditionalReactionNode(
+                reactants=p[2].reactants,
+                products=p[2].products,
+                condition=p[4]
+            )
+        else:
+            # Reactants with condition (predict products)
+            p[0] = nodes.ConditionalReactionNode(
+                reactants=p[2],
+                products=[],
+                condition=p[4]
+            )
+
+def p_condition(p):
+    """condition : condition AND condition
+                 | condition OR condition
+                 | CATALYST LPAREN ELEMENT_SYMBOL RPAREN
+                 | TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN
+                 | PRESSURE LPAREN INTEGER IDENTIFIER RPAREN"""
+    if len(p) == 5:  # Single condition (e.g., CATALYST(Fe))
+        p[0] = nodes.ConditionNode(
+            condition_type=p.slice[1].type,  # Use token type, not value
+            value=p[3]
+        )
+    elif len(p) == 6:  # Temperature or pressure condition (e.g., TEMPERATURE(450c))
+        p[0] = nodes.ConditionNode(
+            condition_type=p.slice[1].type,  # Use token type, not value
+            value=f"{p[3]}{p[4]}"
+        )
+    else:  # Logical operator (e.g., AND, OR)
+        operator = p.slice[2].type  # Correctly get token type (AND/OR)
+        p[0] = nodes.ConditionNode(
+            condition_type='LOGICAL',
+            left=p[1],
+            right=p[3],
+            operator=operator
+        )
 
 def p_analyze_statement(p):
     """analyze_statement : ANALYZE molecule
@@ -46,6 +105,50 @@ def p_analyze_statement(p):
         else:
             raise SyntaxError(f"Invalid detail specifier: {p[4]}. Use 'all'.")
     p[0] = nodes.AnalyzeStatementNode(target=p[2], detail_level=detail_level)
+
+def p_reaction_type_statement(p):
+    """reaction_type_statement : COMBUSTION
+                               | DECOMPOSITION
+                               | SINGLE_REPLACEMENT
+                               | DOUBLE_REPLACEMENT
+                               | ACID_BASE
+                               | PRECIPITATION
+                               | GAS_FORMATION
+                               | COMBUSTION OF molecule
+                               | DECOMPOSITION OF molecule
+                               | SINGLE_REPLACEMENT OF molecule
+                               | DOUBLE_REPLACEMENT OF molecule
+                               | ACID_BASE OF molecule
+                               | PRECIPITATION OF molecule
+                               | GAS_FORMATION OF molecule"""
+    if len(p) == 2:
+        p[0] = nodes.ReactionTypeNode(p[1].upper(), None)  # e.g., p[1] = 'COMBUSTION'
+    else:
+        p[0] = nodes.ReactionTypeNode(p[1].upper(), p[3])  # e.g., p[1] = 'DECOMPOSITION', p[3] = molecule
+
+def p_thermodynamic_statement(p):
+    """thermodynamic_statement : ENTHALPY OF reaction_expr
+                               | ENTROPY OF reaction_expr
+                               | GIBBS_ENERGY OF reaction_expr
+                               | EQUILIBRIUM OF reaction_expr
+                               | ENTHALPY INFO reaction_expr
+                               | ENTROPY INFO reaction_expr
+                               | GIBBS_ENERGY INFO reaction_expr
+                               | EQUILIBRIUM INFO reaction_expr"""
+    if p[2] == 'of':
+        p[0] = nodes.ThermodynamicNode(p[1].upper(), p[3], info=False)
+    elif p[2] == 'info':
+        p[0] = nodes.ThermodynamicNode(p[1].upper(), p[3], info=True)
+
+
+def p_chemical_analysis_statement(p):
+    """chemical_analysis_statement : OXIDATION_STATES OF molecule
+                                   | LIMITING_REAGENT OF reaction_expr
+                                   | PERCENT_YIELD OF reaction_expr
+                                   | EMPIRICAL_FORMULA OF molecule
+                                   | MOLECULAR_FORMULA OF molecule
+                                   | MOLAR_MASS OF molecule"""
+    p[0] = nodes.ChemicalAnalysisNode(p[1].upper(), p[3])
 
 def p_reaction_expr(p):
     """reaction_expr : reactants_expr ARROW products_expr"""

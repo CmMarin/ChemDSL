@@ -39,6 +39,35 @@ class PredictStatementNode(ASTNode):
     def __repr__(self):
         return f"Predict({self.reaction_expr})"
 
+class ReactionTypeNode(ASTNode):
+    """Represents a reaction type statement."""
+    def __init__(self, reaction_type, target=None):
+        self.reaction_type = reaction_type
+        self.target = target  # Optional: specific element or compound
+
+    def __repr__(self):
+        if self.target:
+            return f"ReactionTypeNode(type={self.reaction_type}, target={self.target})"
+        return f"ReactionTypeNode(type={self.reaction_type})"
+
+class ThermodynamicNode(ASTNode):
+    """Represents a thermodynamic property statement."""
+    def __init__(self, property_type, reaction_expr, info=False):
+        self.property_type = property_type  # e.g., 'ENTHALPY', 'ENTROPY'
+        self.reaction_expr = reaction_expr  # The reaction expression
+        self.info = info  # Whether to display info or the property value
+
+    def __repr__(self):
+        return f"ThermodynamicNode(property_type={self.property_type}, reaction_expr={self.reaction_expr}, info={self.info})"
+
+class ChemicalAnalysisNode(ASTNode):
+    """Represents a chemical analysis statement."""
+    def __init__(self, analysis_type, target):
+        self.analysis_type = analysis_type  # e.g., 'OXIDATION_STATES', 'MOLAR_MASS'
+        self.target = target  # The target compound or reaction
+
+    def __repr__(self):
+        return f"ChemicalAnalysisNode(analysis_type={self.analysis_type}, target={self.target})"
 
 class ReactionExpressionNode(ASTNode):
     """Represents a chemical reaction expression (reactants -> products)."""
@@ -51,6 +80,29 @@ class ReactionExpressionNode(ASTNode):
         products = ", ".join(str(p) for p in self.products)
         return f"ReactionExpressionNode(reactants=[{reactants}], products=[{products}])"
 
+class ConditionNode(ASTNode):
+    """Represents a condition in an IF statement."""
+    def __init__(self, condition_type, value=None, left=None, right=None, operator=None):
+        self.condition_type = condition_type  # e.g., 'CATALYST', 'TEMPERATURE'
+        self.value = value  # e.g., 'Fe', '450C'
+        self.left = left  # Left operand for logical operators
+        self.right = right  # Right operand for logical operators
+        self.operator = operator  # Logical operator: 'AND', 'OR'
+
+    def __repr__(self):
+        if self.operator:
+            return f"ConditionNode({self.left} {self.operator} {self.right})"
+        return f"ConditionNode(type={self.condition_type}, value={self.value})"
+
+class ConditionalReactionNode(ASTNode):
+    """Represents a reaction with conditional logic."""
+    def __init__(self, reactants, products, condition):
+        self.reactants = reactants
+        self.products = products
+        self.condition = condition
+
+    def __repr__(self):
+        return f"ConditionalReactionNode(reactants={self.reactants}, products={self.products}, condition={self.condition})"
 
 class ChemicalTermNode(ASTNode):
     """Represents a chemical term (coefficient * molecule)."""
