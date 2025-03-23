@@ -35,10 +35,65 @@ def p_balance_statement(p):
     p[0] = nodes.BalanceStatementNode(p[2])
 
 def p_predict_statement(p):
-    """predict_statement : PREDICT reactants_expr"""
-    # Create a ReactionExpressionNode with reactants and empty products
-    reaction_expr = nodes.ReactionExpressionNode(reactants=p[2], products=[])
-    p[0] = nodes.PredictStatementNode(reaction_expr)
+    """predict_statement : PREDICT reaction_expr
+                         | PREDICT reaction_expr IF condition
+                         | PREDICT reactants_expr
+                         | PREDICT reactants_expr IF condition"""
+    if len(p) == 3:  # No condition (reactants + products OR reactants only)
+        if isinstance(p[2], nodes.ReactionExpressionNode):
+            # Explicit reaction (A -> B)
+            p[0] = nodes.ConditionalReactionNode(
+                reactants=p[2].reactants,
+                products=p[2].products,
+                condition=None
+            )
+        else:
+            # Reactants only (predict products)
+            p[0] = nodes.ConditionalReactionNode(
+                reactants=p[2],
+                products=[],
+                condition=None
+            )
+    else:  # With condition (len(p) == 5)
+        if isinstance(p[2], nodes.ReactionExpressionNode):
+            # Explicit reaction with condition (A -> B IF ...)
+            p[0] = nodes.ConditionalReactionNode(
+                reactants=p[2].reactants,
+                products=p[2].products,
+                condition=p[4]
+            )
+        else:
+            # Reactants with condition (predict products)
+            p[0] = nodes.ConditionalReactionNode(
+                reactants=p[2],
+                products=[],
+                condition=p[4]
+            )
+
+def p_condition(p):
+    """condition : condition AND condition
+                 | condition OR condition
+                 | CATALYST LPAREN ELEMENT_SYMBOL RPAREN
+                 | TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN
+                 | PRESSURE LPAREN INTEGER IDENTIFIER RPAREN"""
+    if len(p) == 5:  # Single condition (e.g., CATALYST(Fe))
+        p[0] = nodes.ConditionNode(
+            condition_type=p.slice[1].type,  # Use token type, not value
+            value=p[3]
+        )
+    elif len(p) == 6:  # Temperature or pressure condition (e.g., TEMPERATURE(450c))
+        p[0] = nodes.ConditionNode(
+            condition_type=p.slice[1].type,  # Use token type, not value
+            value=f"{p[3]}{p[4]}"
+        )
+    else:  # Logical operator (e.g., AND, OR)
+        operator = p.slice[2].type  # Correctly get token type (AND/OR)
+        p[0] = nodes.ConditionNode(
+            condition_type='LOGICAL',
+            left=p[1],
+            right=p[3],
+            operator=operator
+        )
 
 def p_analyze_statement(p):
     """analyze_statement : ANALYZE molecule

@@ -9,6 +9,8 @@ from DSL.chemistry import balancer, reactions, compounds, ELEMENTS
 from DSL.chemistry.elements import COMPOUNDS
 from DSL.interpreter.enviroment_dsl import Environment
 from DSL.utils.error_handler import ErrorHandler
+import logging
+
 
 class Evaluator:
     def __init__(self):
@@ -441,6 +443,61 @@ class Evaluator:
         for element, count in elements.items():
             empirical_formula += f"{element}{count // gcd}"
         return empirical_formula
+
+    def eval_ConditionNode(self, node):
+        """Evaluate a condition node."""
+        logging.debug(f"Evaluating condition: type={node.condition_type}, value={node.value}, operator={node.operator}")
+
+        if node.condition_type == 'LOGICAL':
+            left = self.evaluate(node.left)
+            right = self.evaluate(node.right)
+            logging.debug(f"Logical condition: left={left}, right={right}, operator={node.operator}")
+            if node.operator == 'AND':
+                result = left and right
+            elif node.operator == 'OR':
+                result = left or right
+            else:
+                raise ValueError(f"Unknown logical operator: {node.operator}")
+        else:
+            if node.condition_type == 'CATALYST':
+                result = node.value == 'Fe'  # Only Fe catalyst is valid
+            elif node.condition_type == 'TEMPERATURE':
+                temp_value = int(node.value[:-1])  # Remove 'c' and convert to integer
+                result = 400 <= temp_value <= 500  # Temperature between 400C and 500C is valid
+            elif node.condition_type == 'PRESSURE':
+                pressure_value = int(node.value[:-3])  # Remove 'atm' and convert to integer
+                result = 200 <= pressure_value <= 300  # Pressure between 200atm and 300atm is valid
+            else:
+                raise ValueError(f"Unknown condition type: {node.condition_type}")
+
+            logging.debug(f"Single condition result: {result}")
+
+        logging.debug(f"Final condition result: {result}")
+        return result
+
+    def eval_ConditionalReactionNode(self, node):
+        # Evaluate conditions (if present)
+        if node.condition is not None:
+            condition_met = bool(self.evaluate(node.condition))
+            if not condition_met:
+                return f"Reaction does not occur (conditions not met): {node.reactants} -> {node.products}"
+
+        # Case 1: Products are explicitly provided (no prediction needed)
+        if node.products:
+            return f"Reaction occurs: {node.reactants} -> {node.products}"
+
+        # Case 2: Predict products
+        reaction_expr = self.eval_ReactionExpressionNode(
+            nodes.ReactionExpressionNode(node.reactants, [])
+        )
+        reactant_compounds = [r[1] for r in reaction_expr.reactants]
+        predicted_reaction = reactions.predict_reaction(reactant_compounds)
+
+        return (
+            f"Predicted Reaction: {predicted_reaction}"
+            if predicted_reaction
+            else "Could not predict reaction products."
+        )
 
     def find_gcd(self, numbers):
         """Find the greatest common divisor (GCD) of a list of numbers."""

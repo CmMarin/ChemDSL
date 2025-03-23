@@ -12,49 +12,115 @@ class ChemDSL_GUI:
     def __init__(self, root):
         self.root = root
         self.root.title("ChemDSL IDE")
-        self.root.geometry("1200x800")
+        self.root.geometry("1300x850")
+        self.configure_styles()
 
-        # Create main panes
-        main_pane = PanedWindow(root, orient=HORIZONTAL)
+        # Main container
+        main_pane = ttk.PanedWindow(root, orient=HORIZONTAL)
         main_pane.pack(fill=BOTH, expand=1)
 
-        # Left pane (Code Editor)
-        left_frame = Frame(main_pane)
-        self.create_editor(left_frame)
+        # Left Panel (Editor)
+        left_frame = ttk.Frame(main_pane)
+        self.create_editor_ui(left_frame)
         main_pane.add(left_frame)
 
-        # Right pane (Visualization and Steps)
-        right_pane = PanedWindow(main_pane, orient=VERTICAL)
-
-        # Reaction Visualizer
-        self.visualizer = ScrolledText(right_pane, height=15, wrap=WORD)
-        right_pane.add(self.visualizer)
-
-        # Execution Steps
-        self.steps_text = ScrolledText(right_pane, height=15, wrap=WORD)
-        right_pane.add(self.steps_text)
-
+        # Right Panel (Visualization)
+        right_pane = ttk.PanedWindow(main_pane, orient=VERTICAL)
+        self.create_visualization_ui(right_pane)
         main_pane.add(right_pane)
 
-        # Run button
-        Button(root, text="Run (F5)", command=self.run_code).pack(side=BOTTOM, pady=5)
+        # Status Bar
+        self.status_bar = ttk.Label(root, text="Ready", relief=SUNKEN)
+        self.status_bar.pack(side=BOTTOM, fill=X)
 
-        # Configure tags for syntax highlighting
-        self.editor.tag_configure('keyword', foreground='blue')
-        self.editor.tag_configure('error', foreground='red')
-
-        # Bind F5 key
         self.root.bind('<F5>', lambda e: self.run_code())
 
-    def create_editor(self, parent):
-        self.editor = ScrolledText(parent, wrap=WORD, font=('Consolas', 12))
+    def configure_styles(self):
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.configure('TFrame', background='#2d2d30')
+        style.configure('TButton', background='#3e3e42', foreground='white', borderwidth=0)
+        style.map('TButton', background=[('active', '#007acc')])
+        style.configure('TLabel', background='#2d2d30', foreground='white')
+        style.configure('TNotebook', background='#2d2d30', borderwidth=0)
+        style.configure('TNotebook.Tab', background='#3e3e42', foreground='white', padding=[10, 5])
+
+    def create_editor_ui(self, parent):
+        # Toolbar
+        toolbar = ttk.Frame(parent)
+        toolbar.pack(fill=X, pady=5)
+
+        commands = [
+            ("Predict", "predict {};"),
+            ("Analyze", "analyze {};"),
+            ("Balance", "balance {} -> {};"),
+            ("Clear", self.clear_all)
+        ]
+
+        for text, cmd in commands:
+            btn = ttk.Button(toolbar, text=text,
+                             command=lambda c=cmd: self.insert_template(c) if isinstance(c, str) else c())
+            btn.pack(side=LEFT, padx=2)
+
+        # Editor
+        self.editor = ScrolledText(parent, wrap=WORD, font=('Consolas', 12),
+                                   bg='#1e1e1e', fg='white', insertbackground='white')
         self.editor.pack(fill=BOTH, expand=1)
 
-        # Add sample code
-        self.editor.insert(END, "predict N2 + O2;\n")
-        self.editor.insert(END, "analyze HCl;\n")
-        self.editor.insert(END, "balance H2 + O2 -> H2O;\n")
+        # Tutorial placeholder
+        self.tutorial_text = """/* ChemDSL Quick Guide */
+
+1. Use toolbar buttons to insert commands
+2. Press F5 or Run button to execute
+3. View results in right panels
+
+Examples:
+predict N2 + O2;
+analyze H2O;
+balance CH4 + O2 -> CO2 + H2O;"""
+        self.editor.insert(END, self.tutorial_text)
+        self.editor.tag_add("placeholder", "1.0", "end")
+        self.editor.tag_config("placeholder", foreground="#808080")
+        self.editor.bind("<FocusIn>", self.clear_placeholder)
         self.editor.bind('<KeyRelease>', self.on_editor_change)
+
+    def create_visualization_ui(self, parent):
+        notebook = ttk.Notebook(parent)
+
+        # Results Tab
+        results_frame = ttk.Frame(notebook)
+        self.visualizer = ScrolledText(results_frame, wrap=WORD, font=('Segoe UI', 11),
+                                       bg='#2d2d30', fg='white', insertbackground='white')
+        self.visualizer.pack(fill=BOTH, expand=1)
+
+        # Steps Tab
+        steps_frame = ttk.Frame(notebook)
+        self.steps_text = ScrolledText(steps_frame, wrap=WORD, font=('Segoe UI', 11),
+                                       bg='#2d2d30', fg='white', insertbackground='white')
+        self.steps_text.pack(fill=BOTH, expand=1)
+
+        notebook.add(results_frame, text="Analysis Results")
+        notebook.add(steps_frame, text="Execution Steps")
+        notebook.pack(fill=BOTH, expand=1)
+
+    def insert_template(self, template):
+        self.clear_placeholder()
+        self.editor.insert(END, template + "\n")
+        self.editor.focus_set()
+        self.status_bar.config(text=f"Inserted template: {template}")
+
+    def clear_placeholder(self, event=None):
+        if "placeholder" in self.editor.tag_names("1.0"):
+            self.editor.delete("1.0", "end")
+            self.editor.tag_remove("placeholder", "1.0", "end")
+
+    def clear_all(self):
+        self.editor.delete("1.0", END)
+        self.visualizer.delete("1.0", END)
+        self.steps_text.delete("1.0", END)
+        self.editor.insert(END, self.tutorial_text)
+        self.editor.tag_add("placeholder", "1.0", "end")
+        self.status_bar.config(text="Cleared all content")
 
     def on_editor_change(self, event):
         self.highlight_syntax()
@@ -62,8 +128,9 @@ class ChemDSL_GUI:
     def highlight_syntax(self):
         code = self.editor.get("1.0", END)
         self.editor.tag_remove('keyword', "1.0", END)
+        self.editor.tag_remove('comment', "1.0", END)
 
-        keywords = ['predict', 'balance']
+        keywords = ['predict', 'balance', 'analyze']
         for word in keywords:
             start = "1.0"
             while True:
@@ -74,7 +141,26 @@ class ChemDSL_GUI:
                 self.editor.tag_add('keyword', start, end)
                 start = end
 
+        # Highlight comments
+        start = "1.0"
+        while True:
+            start = self.editor.search(r'/\*.*?\*/', start, stopindex=END, regexp=True)
+            if not start:
+                break
+            end = self.editor.search(r'\*/', start, stopindex=END, regexp=True)
+            if end:
+                end += "+2c"
+                self.editor.tag_add('comment', start, end)
+                start = end
+            else:
+                break
+
+        self.editor.tag_configure('keyword', foreground='#569cd6')
+        self.editor.tag_configure('comment', foreground='#608b4e')
+
+    # Keep original run_code and _format_analysis_result methods unchanged
     def run_code(self):
+        # Original run_code implementation from user's code
         code = self.editor.get("1.0", END).strip()
         self.steps_text.delete('1.0', END)
         self.visualizer.delete('1.0', END)
@@ -84,6 +170,7 @@ class ChemDSL_GUI:
         sys.stdout = io.StringIO()
 
         try:
+            self.status_bar.config(text="Executing...")
             # Show lexer tokens
             self.steps_text.insert(END, "=== LEXER TOKENS ===\n")
             tokens = tokenize(code)
@@ -107,12 +194,10 @@ class ChemDSL_GUI:
             if isinstance(result, dict) and result.get('is_analysis_result', False):
                 self.steps_text.insert(END, "Processing analysis result...\n")
                 self._format_analysis_result(result)
-            # Try to convert string representation of dict to actual dict
             elif isinstance(result, str) and '{' in result and '}' in result:
                 self.steps_text.insert(END, "Trying to parse dictionary string...\n")
                 try:
                     import ast as python_ast
-                    # Try to evaluate the string as a Python literal
                     dict_result = python_ast.literal_eval(result)
                     if isinstance(dict_result, dict) and dict_result.get('is_analysis_result', False):
                         self.steps_text.insert(END, "Successfully parsed as analysis result dictionary.\n")
@@ -130,24 +215,20 @@ class ChemDSL_GUI:
         except Exception as e:
             messagebox.showerror("Error", str(e))
             self.steps_text.insert(END, f"\nERROR: {str(e)}", 'error')
+            self.status_bar.config(text=f"Error: {str(e)}")
         finally:
-            # Restore stdout and get captured output
             captured_output = sys.stdout.getvalue()
             sys.stdout = old_stdout
             self.steps_text.insert(END, captured_output)
+            self.status_bar.config(text="Execution completed")
 
-    # Add this to the ChemDSL_GUI class
     def _format_analysis_result(self, analysis):
-        # # Clear previous content
-        # self.visualizer.delete('1.0', END)
-
-        # Configure tags for formatting
-        self.visualizer.tag_configure('header', font=('Helvetica', 12, 'bold'), foreground='blue')
-        self.visualizer.tag_configure('subheader', font=('Helvetica', 11, 'bold'))
-        self.visualizer.tag_configure('bold', font=('Helvetica', 10, 'bold'))
+        # Original _format_analysis_result implementation from user's code
+        self.visualizer.tag_configure('header', font=('Helvetica', 12, 'bold'), foreground='#569cd6')
+        self.visualizer.tag_configure('subheader', font=('Helvetica', 11, 'bold'), foreground='#dcdcaa')
+        self.visualizer.tag_configure('bold', font=('Helvetica', 10, 'bold'), foreground='white')
 
         if 'element' in analysis:
-            # Format element analysis
             self.visualizer.insert(END, "=== Element Analysis ===\n", 'header')
             self.visualizer.insert(END, f"Symbol: {analysis['element']}\n", 'bold')
             self.visualizer.insert(END, f"Name: {analysis['name']}\n")
@@ -156,23 +237,16 @@ class ChemDSL_GUI:
             self.visualizer.insert(END, f"Group: {analysis['group']}\n")
             self.visualizer.insert(END, f"Electronegativity: {analysis['electronegativity']}\n")
 
-            # Common Compounds
             self.visualizer.insert(END, "\nCommon Compounds:\n", 'subheader')
             for compound in analysis['common_compounds']:
                 self.visualizer.insert(END, f"  - {compound}\n")
 
-            # Common Reactions
             self.visualizer.insert(END, "\nCommon Reactions:\n", 'subheader')
             for reaction in analysis['common_reactions']:
                 self.visualizer.insert(END, f"  - {reaction}\n")
 
-
         elif 'compound' in analysis:
-
-            # Compound analysis formatting
-
             self.visualizer.insert(END, "=== Compound Analysis ===\n", 'header')
-
             self.visualizer.insert(END, f"Formula: {analysis['compound']}\n", 'bold')
 
             if 'name' in analysis:
@@ -186,48 +260,33 @@ class ChemDSL_GUI:
             if 'classification' in analysis:
                 self.visualizer.insert(END, f"Classification: {analysis['classification']}\n")
 
-            # Composition
-
             self.visualizer.insert(END, "\nComposition:\n", 'subheader')
-
             for element, count in analysis['composition'].items():
                 self.visualizer.insert(END, f"  - {element}: {count}\n")
 
-            # Additional detailed information (if available)
-
             if analysis.get('detail_level') == 'all':
-
                 if 'density' in analysis:
                     self.visualizer.insert(END, f"\nDensity: {analysis['density']}\n")
-
                 if 'melting_point' in analysis:
                     self.visualizer.insert(END, f"Melting Point: {analysis['melting_point']} °C\n")
-
                 if 'boiling_point' in analysis:
                     self.visualizer.insert(END, f"Boiling Point: {analysis['boiling_point']} °C\n")
-
                 if 'solubility' in analysis:
                     self.visualizer.insert(END, f"Solubility: {analysis['solubility']}\n")
-
                 if 'acidity' in analysis:
                     self.visualizer.insert(END, f"Acidity: {analysis['acidity']}\n")
 
                 if 'common_uses' in analysis:
-
                     self.visualizer.insert(END, "\nCommon Uses:\n", 'subheader')
-
                     for use in analysis['common_uses']:
                         self.visualizer.insert(END, f"  - {use}\n")
 
                 if 'hazards' in analysis:
-
                     self.visualizer.insert(END, "\nHazards:\n", 'subheader')
-
                     for hazard in analysis['hazards']:
                         self.visualizer.insert(END, f"  - {hazard}\n")
 
         else:
-            # Generic handling for other dictionary results
             self.visualizer.insert(END, "=== Analysis Results ===\n", 'header')
             for key, value in analysis.items():
                 if isinstance(value, dict):
@@ -241,7 +300,6 @@ class ChemDSL_GUI:
                 else:
                     self.visualizer.insert(END, f"{key.title()}: {value}\n")
 
-        # Display detail level if present
         if 'detail_level' in analysis:
             self.visualizer.insert(END, f"\nDetail Level: {analysis['detail_level']}\n")
 

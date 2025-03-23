@@ -54,3 +54,11 @@ class PrettyPrintVisitor(Visitor):
 
     def visit_ElementGroupNode(self, node):
         return f"{node.symbol}{node.count if node.count != 1 else ''}"
+
+    def visit_ConditionNode(self, node):
+        if node.operator:
+            return f"{self.visit(node.left)} {node.operator} {self.visit(node.right)}"
+        return f"{node.condition_type}({node.value})"
+
+    def visit_ConditionalReactionNode(self, node):
+        return f"ConditionalReactionNode(reactants={node.reactants}, products={node.products}, condition={self.visit(node.condition)})"

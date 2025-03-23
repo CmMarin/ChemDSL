@@ -6,7 +6,6 @@ Unused terminals:
     AQUEOUS
     ASSIGN
     CARET
-    CATALYST
     COMMA
     COMPOUND
     ELEMENT
@@ -24,7 +23,6 @@ Unused terminals:
     OXIDATION_NUMBER
     PH
     POSITIVE
-    PRESSURE
     QUERY
     RBRACE
     RBRACKET
@@ -35,7 +33,6 @@ Unused terminals:
     REVERSIBLE_ARROW
     SOLID
     STRING
-    TEMPERATURE
     TIME
     WITH
     YIELD
@@ -53,104 +50,115 @@ Rule 7     statement -> reaction_type_statement
 Rule 8     statement -> thermodynamic_statement
 Rule 9     statement -> chemical_analysis_statement
 Rule 10    balance_statement -> BALANCE reaction_expr
-Rule 11    predict_statement -> PREDICT reactants_expr
-Rule 12    analyze_statement -> ANALYZE molecule
-Rule 13    analyze_statement -> ANALYZE molecule FOR IDENTIFIER
-Rule 14    reaction_type_statement -> COMBUSTION
-Rule 15    reaction_type_statement -> DECOMPOSITION
-Rule 16    reaction_type_statement -> SINGLE_REPLACEMENT
-Rule 17    reaction_type_statement -> DOUBLE_REPLACEMENT
-Rule 18    reaction_type_statement -> ACID_BASE
-Rule 19    reaction_type_statement -> PRECIPITATION
-Rule 20    reaction_type_statement -> GAS_FORMATION
-Rule 21    reaction_type_statement -> COMBUSTION OF molecule
-Rule 22    reaction_type_statement -> DECOMPOSITION OF molecule
-Rule 23    reaction_type_statement -> SINGLE_REPLACEMENT OF molecule
-Rule 24    reaction_type_statement -> DOUBLE_REPLACEMENT OF molecule
-Rule 25    reaction_type_statement -> ACID_BASE OF molecule
-Rule 26    reaction_type_statement -> PRECIPITATION OF molecule
-Rule 27    reaction_type_statement -> GAS_FORMATION OF molecule
-Rule 28    thermodynamic_statement -> ENTHALPY OF reaction_expr
-Rule 29    thermodynamic_statement -> ENTROPY OF reaction_expr
-Rule 30    thermodynamic_statement -> GIBBS_ENERGY OF reaction_expr
-Rule 31    thermodynamic_statement -> EQUILIBRIUM OF reaction_expr
-Rule 32    thermodynamic_statement -> ENTHALPY INFO reaction_expr
-Rule 33    thermodynamic_statement -> ENTROPY INFO reaction_expr
-Rule 34    thermodynamic_statement -> GIBBS_ENERGY INFO reaction_expr
-Rule 35    thermodynamic_statement -> EQUILIBRIUM INFO reaction_expr
-Rule 36    chemical_analysis_statement -> OXIDATION_STATES OF molecule
-Rule 37    chemical_analysis_statement -> LIMITING_REAGENT OF reaction_expr
-Rule 38    chemical_analysis_statement -> PERCENT_YIELD OF reaction_expr
-Rule 39    chemical_analysis_statement -> EMPIRICAL_FORMULA OF molecule
-Rule 40    chemical_analysis_statement -> MOLECULAR_FORMULA OF molecule
-Rule 41    chemical_analysis_statement -> MOLAR_MASS OF molecule
-Rule 42    reaction_expr -> reactants_expr ARROW products_expr
-Rule 43    reactants_expr -> chemical_term_list
-Rule 44    products_expr -> chemical_term_list
-Rule 45    chemical_term_list -> chemical_term PLUS chemical_term_list
-Rule 46    chemical_term_list -> chemical_term
-Rule 47    chemical_term -> INTEGER molecule
-Rule 48    chemical_term -> molecule
-Rule 49    molecule -> molecule_part molecule
-Rule 50    molecule -> molecule_part
-Rule 51    molecule_part -> element_group
-Rule 52    molecule_part -> LPAREN molecule RPAREN INTEGER
-Rule 53    element_group -> ELEMENT_SYMBOL INTEGER
-Rule 54    element_group -> ELEMENT_SYMBOL
+Rule 11    predict_statement -> PREDICT reaction_expr
+Rule 12    predict_statement -> PREDICT reaction_expr IF condition
+Rule 13    predict_statement -> PREDICT reactants_expr
+Rule 14    predict_statement -> PREDICT reactants_expr IF condition
+Rule 15    condition -> condition AND condition
+Rule 16    condition -> condition OR condition
+Rule 17    condition -> CATALYST LPAREN ELEMENT_SYMBOL RPAREN
+Rule 18    condition -> TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN
+Rule 19    condition -> PRESSURE LPAREN INTEGER IDENTIFIER RPAREN
+Rule 20    analyze_statement -> ANALYZE molecule
+Rule 21    analyze_statement -> ANALYZE molecule FOR IDENTIFIER
+Rule 22    reaction_type_statement -> COMBUSTION
+Rule 23    reaction_type_statement -> DECOMPOSITION
+Rule 24    reaction_type_statement -> SINGLE_REPLACEMENT
+Rule 25    reaction_type_statement -> DOUBLE_REPLACEMENT
+Rule 26    reaction_type_statement -> ACID_BASE
+Rule 27    reaction_type_statement -> PRECIPITATION
+Rule 28    reaction_type_statement -> GAS_FORMATION
+Rule 29    reaction_type_statement -> COMBUSTION OF molecule
+Rule 30    reaction_type_statement -> DECOMPOSITION OF molecule
+Rule 31    reaction_type_statement -> SINGLE_REPLACEMENT OF molecule
+Rule 32    reaction_type_statement -> DOUBLE_REPLACEMENT OF molecule
+Rule 33    reaction_type_statement -> ACID_BASE OF molecule
+Rule 34    reaction_type_statement -> PRECIPITATION OF molecule
+Rule 35    reaction_type_statement -> GAS_FORMATION OF molecule
+Rule 36    thermodynamic_statement -> ENTHALPY OF reaction_expr
+Rule 37    thermodynamic_statement -> ENTROPY OF reaction_expr
+Rule 38    thermodynamic_statement -> GIBBS_ENERGY OF reaction_expr
+Rule 39    thermodynamic_statement -> EQUILIBRIUM OF reaction_expr
+Rule 40    thermodynamic_statement -> ENTHALPY INFO reaction_expr
+Rule 41    thermodynamic_statement -> ENTROPY INFO reaction_expr
+Rule 42    thermodynamic_statement -> GIBBS_ENERGY INFO reaction_expr
+Rule 43    thermodynamic_statement -> EQUILIBRIUM INFO reaction_expr
+Rule 44    chemical_analysis_statement -> OXIDATION_STATES OF molecule
+Rule 45    chemical_analysis_statement -> LIMITING_REAGENT OF reaction_expr
+Rule 46    chemical_analysis_statement -> PERCENT_YIELD OF reaction_expr
+Rule 47    chemical_analysis_statement -> EMPIRICAL_FORMULA OF molecule
+Rule 48    chemical_analysis_statement -> MOLECULAR_FORMULA OF molecule
+Rule 49    chemical_analysis_statement -> MOLAR_MASS OF molecule
+Rule 50    reaction_expr -> reactants_expr ARROW products_expr
+Rule 51    reactants_expr -> chemical_term_list
+Rule 52    products_expr -> chemical_term_list
+Rule 53    chemical_term_list -> chemical_term PLUS chemical_term_list
+Rule 54    chemical_term_list -> chemical_term
+Rule 55    chemical_term -> INTEGER molecule
+Rule 56    chemical_term -> molecule
+Rule 57    molecule -> molecule_part molecule
+Rule 58    molecule -> molecule_part
+Rule 59    molecule_part -> element_group
+Rule 60    molecule_part -> LPAREN molecule RPAREN INTEGER
+Rule 61    element_group -> ELEMENT_SYMBOL INTEGER
+Rule 62    element_group -> ELEMENT_SYMBOL
 
 Terminals, with rules where they appear
 
-ACID_BASE            : 18 25
+ACID_BASE            : 26 33
 ALGEBRAIC            : 
-ANALYZE              : 12 13
+ANALYZE              : 20 21
+AND                  : 15
 AQUEOUS              : 
-ARROW                : 42
+ARROW                : 50
 ASSIGN               : 
 BALANCE              : 10
 CARET                : 
-CATALYST             : 
-COMBUSTION           : 14 21
+CATALYST             : 17
+COMBUSTION           : 22 29
 COMMA                : 
 COMPOUND             : 
-DECOMPOSITION        : 15 22
-DOUBLE_REPLACEMENT   : 17 24
+DECOMPOSITION        : 23 30
+DOUBLE_REPLACEMENT   : 25 32
 ELEMENT              : 
-ELEMENT_SYMBOL       : 53 54
-EMPIRICAL_FORMULA    : 39
-ENTHALPY             : 28 32
-ENTROPY              : 29 33
+ELEMENT_SYMBOL       : 17 61 62
+EMPIRICAL_FORMULA    : 47
+ENTHALPY             : 36 40
+ENTROPY              : 37 41
 EQUALS               : 
-EQUILIBRIUM          : 31 35
+EQUILIBRIUM          : 39 43
 FLOAT                : 
-FOR                  : 13
+FOR                  : 21
 GAS                  : 
-GAS_FORMATION        : 20 27
-GIBBS_ENERGY         : 30 34
+GAS_FORMATION        : 28 35
+GIBBS_ENERGY         : 38 42
 HALF_REACTION        : 
 HEAT                 : 
-IDENTIFIER           : 13
-INFO                 : 32 33 34 35
-INTEGER              : 47 52 53
+IDENTIFIER           : 18 19 21
+IF                   : 12 14
+INFO                 : 40 41 42 43
+INTEGER              : 18 19 55 60 61
 LBRACE               : 
 LBRACKET             : 
-LIMITING_REAGENT     : 37
+LIMITING_REAGENT     : 45
 LIQUID               : 
-LPAREN               : 52
+LPAREN               : 17 18 19 60
 MOLARITY             : 
-MOLAR_MASS           : 41
-MOLECULAR_FORMULA    : 40
+MOLAR_MASS           : 49
+MOLECULAR_FORMULA    : 48
 NEGATIVE             : 
 NORMALITY            : 
-OF                   : 21 22 23 24 25 26 27 28 29 30 31 36 37 38 39 40 41
+OF                   : 29 30 31 32 33 34 35 36 37 38 39 44 45 46 47 48 49
+OR                   : 16
 OXIDATION_NUMBER     : 
-OXIDATION_STATES     : 36
-PERCENT_YIELD        : 38
+OXIDATION_STATES     : 44
+PERCENT_YIELD        : 46
 PH                   : 
-PLUS                 : 45
+PLUS                 : 53
 POSITIVE             : 
-PRECIPITATION        : 19 26
-PREDICT              : 11
-PRESSURE             : 
+PRECIPITATION        : 27 34
+PREDICT              : 11 12 13 14
+PRESSURE             : 19
 QUERY                : 
 RBRACE               : 
 RBRACKET             : 
@@ -159,12 +167,12 @@ REACTION_TYPE        :
 REDOX                : 
 RESONANCE_ARROW      : 
 REVERSIBLE_ARROW     : 
-RPAREN               : 52
+RPAREN               : 17 18 19 60
 SEMICOLON            : 2 3
-SINGLE_REPLACEMENT   : 16 23
+SINGLE_REPLACEMENT   : 24 31
 SOLID                : 
 STRING               : 
-TEMPERATURE          : 
+TEMPERATURE          : 18
 TIME                 : 
 WITH                 : 
 YIELD                : 
@@ -175,16 +183,17 @@ Nonterminals, with rules where they appear
 analyze_statement    : 6
 balance_statement    : 4
 chemical_analysis_statement : 9
-chemical_term        : 45 46
-chemical_term_list   : 43 44 45
-element_group        : 51
-molecule             : 12 13 21 22 23 24 25 26 27 36 39 40 41 47 48 49 52
-molecule_part        : 49 50
+chemical_term        : 53 54
+chemical_term_list   : 51 52 53
+condition            : 12 14 15 15 16 16
+element_group        : 59
+molecule             : 20 21 29 30 31 32 33 34 35 44 47 48 49 55 56 57 60
+molecule_part        : 57 58
 predict_statement    : 5
-products_expr        : 42
+products_expr        : 50
 program              : 0
-reactants_expr       : 11 42
-reaction_expr        : 10 28 29 30 31 32 33 34 35 37 38
+reactants_expr       : 13 14 50
+reaction_expr        : 10 11 12 36 37 38 39 40 41 42 43 45 46
 reaction_type_statement : 7
 statement            : 2 3
 statement_list       : 1 2
@@ -205,37 +214,40 @@ state 0
     (8) statement -> . thermodynamic_statement
     (9) statement -> . chemical_analysis_statement
     (10) balance_statement -> . BALANCE reaction_expr
-    (11) predict_statement -> . PREDICT reactants_expr
-    (12) analyze_statement -> . ANALYZE molecule
-    (13) analyze_statement -> . ANALYZE molecule FOR IDENTIFIER
-    (14) reaction_type_statement -> . COMBUSTION
-    (15) reaction_type_statement -> . DECOMPOSITION
-    (16) reaction_type_statement -> . SINGLE_REPLACEMENT
-    (17) reaction_type_statement -> . DOUBLE_REPLACEMENT
-    (18) reaction_type_statement -> . ACID_BASE
-    (19) reaction_type_statement -> . PRECIPITATION
-    (20) reaction_type_statement -> . GAS_FORMATION
-    (21) reaction_type_statement -> . COMBUSTION OF molecule
-    (22) reaction_type_statement -> . DECOMPOSITION OF molecule
-    (23) reaction_type_statement -> . SINGLE_REPLACEMENT OF molecule
-    (24) reaction_type_statement -> . DOUBLE_REPLACEMENT OF molecule
-    (25) reaction_type_statement -> . ACID_BASE OF molecule
-    (26) reaction_type_statement -> . PRECIPITATION OF molecule
-    (27) reaction_type_statement -> . GAS_FORMATION OF molecule
-    (28) thermodynamic_statement -> . ENTHALPY OF reaction_expr
-    (29) thermodynamic_statement -> . ENTROPY OF reaction_expr
-    (30) thermodynamic_statement -> . GIBBS_ENERGY OF reaction_expr
-    (31) thermodynamic_statement -> . EQUILIBRIUM OF reaction_expr
-    (32) thermodynamic_statement -> . ENTHALPY INFO reaction_expr
-    (33) thermodynamic_statement -> . ENTROPY INFO reaction_expr
-    (34) thermodynamic_statement -> . GIBBS_ENERGY INFO reaction_expr
-    (35) thermodynamic_statement -> . EQUILIBRIUM INFO reaction_expr
-    (36) chemical_analysis_statement -> . OXIDATION_STATES OF molecule
-    (37) chemical_analysis_statement -> . LIMITING_REAGENT OF reaction_expr
-    (38) chemical_analysis_statement -> . PERCENT_YIELD OF reaction_expr
-    (39) chemical_analysis_statement -> . EMPIRICAL_FORMULA OF molecule
-    (40) chemical_analysis_statement -> . MOLECULAR_FORMULA OF molecule
-    (41) chemical_analysis_statement -> . MOLAR_MASS OF molecule
+    (11) predict_statement -> . PREDICT reaction_expr
+    (12) predict_statement -> . PREDICT reaction_expr IF condition
+    (13) predict_statement -> . PREDICT reactants_expr
+    (14) predict_statement -> . PREDICT reactants_expr IF condition
+    (20) analyze_statement -> . ANALYZE molecule
+    (21) analyze_statement -> . ANALYZE molecule FOR IDENTIFIER
+    (22) reaction_type_statement -> . COMBUSTION
+    (23) reaction_type_statement -> . DECOMPOSITION
+    (24) reaction_type_statement -> . SINGLE_REPLACEMENT
+    (25) reaction_type_statement -> . DOUBLE_REPLACEMENT
+    (26) reaction_type_statement -> . ACID_BASE
+    (27) reaction_type_statement -> . PRECIPITATION
+    (28) reaction_type_statement -> . GAS_FORMATION
+    (29) reaction_type_statement -> . COMBUSTION OF molecule
+    (30) reaction_type_statement -> . DECOMPOSITION OF molecule
+    (31) reaction_type_statement -> . SINGLE_REPLACEMENT OF molecule
+    (32) reaction_type_statement -> . DOUBLE_REPLACEMENT OF molecule
+    (33) reaction_type_statement -> . ACID_BASE OF molecule
+    (34) reaction_type_statement -> . PRECIPITATION OF molecule
+    (35) reaction_type_statement -> . GAS_FORMATION OF molecule
+    (36) thermodynamic_statement -> . ENTHALPY OF reaction_expr
+    (37) thermodynamic_statement -> . ENTROPY OF reaction_expr
+    (38) thermodynamic_statement -> . GIBBS_ENERGY OF reaction_expr
+    (39) thermodynamic_statement -> . EQUILIBRIUM OF reaction_expr
+    (40) thermodynamic_statement -> . ENTHALPY INFO reaction_expr
+    (41) thermodynamic_statement -> . ENTROPY INFO reaction_expr
+    (42) thermodynamic_statement -> . GIBBS_ENERGY INFO reaction_expr
+    (43) thermodynamic_statement -> . EQUILIBRIUM INFO reaction_expr
+    (44) chemical_analysis_statement -> . OXIDATION_STATES OF molecule
+    (45) chemical_analysis_statement -> . LIMITING_REAGENT OF reaction_expr
+    (46) chemical_analysis_statement -> . PERCENT_YIELD OF reaction_expr
+    (47) chemical_analysis_statement -> . EMPIRICAL_FORMULA OF molecule
+    (48) chemical_analysis_statement -> . MOLECULAR_FORMULA OF molecule
+    (49) chemical_analysis_statement -> . MOLAR_MASS OF molecule
 
     BALANCE         shift and go to state 10
     PREDICT         shift and go to state 11
@@ -334,18 +346,18 @@ state 9
 state 10
 
     (10) balance_statement -> BALANCE . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
@@ -361,24 +373,29 @@ state 10
 
 state 11
 
-    (11) predict_statement -> PREDICT . reactants_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (11) predict_statement -> PREDICT . reaction_expr
+    (12) predict_statement -> PREDICT . reaction_expr IF condition
+    (13) predict_statement -> PREDICT . reactants_expr
+    (14) predict_statement -> PREDICT . reactants_expr IF condition
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
-    reactants_expr                 shift and go to state 41
+    reaction_expr                  shift and go to state 41
+    reactants_expr                 shift and go to state 42
     chemical_term_list             shift and go to state 33
     chemical_term                  shift and go to state 34
     molecule                       shift and go to state 36
@@ -387,161 +404,161 @@ state 11
 
 state 12
 
-    (12) analyze_statement -> ANALYZE . molecule
-    (13) analyze_statement -> ANALYZE . molecule FOR IDENTIFIER
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (20) analyze_statement -> ANALYZE . molecule
+    (21) analyze_statement -> ANALYZE . molecule FOR IDENTIFIER
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
-    molecule                       shift and go to state 42
+    molecule                       shift and go to state 43
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
 state 13
 
-    (14) reaction_type_statement -> COMBUSTION .
-    (21) reaction_type_statement -> COMBUSTION . OF molecule
+    (22) reaction_type_statement -> COMBUSTION .
+    (29) reaction_type_statement -> COMBUSTION . OF molecule
 
-    SEMICOLON       reduce using rule 14 (reaction_type_statement -> COMBUSTION .)
-    OF              shift and go to state 43
+    SEMICOLON       reduce using rule 22 (reaction_type_statement -> COMBUSTION .)
+    OF              shift and go to state 44
 
 
 state 14
 
-    (15) reaction_type_statement -> DECOMPOSITION .
-    (22) reaction_type_statement -> DECOMPOSITION . OF molecule
+    (23) reaction_type_statement -> DECOMPOSITION .
+    (30) reaction_type_statement -> DECOMPOSITION . OF molecule
 
-    SEMICOLON       reduce using rule 15 (reaction_type_statement -> DECOMPOSITION .)
-    OF              shift and go to state 44
+    SEMICOLON       reduce using rule 23 (reaction_type_statement -> DECOMPOSITION .)
+    OF              shift and go to state 45
 
 
 state 15
 
-    (16) reaction_type_statement -> SINGLE_REPLACEMENT .
-    (23) reaction_type_statement -> SINGLE_REPLACEMENT . OF molecule
+    (24) reaction_type_statement -> SINGLE_REPLACEMENT .
+    (31) reaction_type_statement -> SINGLE_REPLACEMENT . OF molecule
 
-    SEMICOLON       reduce using rule 16 (reaction_type_statement -> SINGLE_REPLACEMENT .)
-    OF              shift and go to state 45
+    SEMICOLON       reduce using rule 24 (reaction_type_statement -> SINGLE_REPLACEMENT .)
+    OF              shift and go to state 46
 
 
 state 16
 
-    (17) reaction_type_statement -> DOUBLE_REPLACEMENT .
-    (24) reaction_type_statement -> DOUBLE_REPLACEMENT . OF molecule
+    (25) reaction_type_statement -> DOUBLE_REPLACEMENT .
+    (32) reaction_type_statement -> DOUBLE_REPLACEMENT . OF molecule
 
-    SEMICOLON       reduce using rule 17 (reaction_type_statement -> DOUBLE_REPLACEMENT .)
-    OF              shift and go to state 46
+    SEMICOLON       reduce using rule 25 (reaction_type_statement -> DOUBLE_REPLACEMENT .)
+    OF              shift and go to state 47
 
 
 state 17
 
-    (18) reaction_type_statement -> ACID_BASE .
-    (25) reaction_type_statement -> ACID_BASE . OF molecule
+    (26) reaction_type_statement -> ACID_BASE .
+    (33) reaction_type_statement -> ACID_BASE . OF molecule
 
-    SEMICOLON       reduce using rule 18 (reaction_type_statement -> ACID_BASE .)
-    OF              shift and go to state 47
+    SEMICOLON       reduce using rule 26 (reaction_type_statement -> ACID_BASE .)
+    OF              shift and go to state 48
 
 
 state 18
 
-    (19) reaction_type_statement -> PRECIPITATION .
-    (26) reaction_type_statement -> PRECIPITATION . OF molecule
+    (27) reaction_type_statement -> PRECIPITATION .
+    (34) reaction_type_statement -> PRECIPITATION . OF molecule
 
-    SEMICOLON       reduce using rule 19 (reaction_type_statement -> PRECIPITATION .)
-    OF              shift and go to state 48
+    SEMICOLON       reduce using rule 27 (reaction_type_statement -> PRECIPITATION .)
+    OF              shift and go to state 49
 
 
 state 19
 
-    (20) reaction_type_statement -> GAS_FORMATION .
-    (27) reaction_type_statement -> GAS_FORMATION . OF molecule
+    (28) reaction_type_statement -> GAS_FORMATION .
+    (35) reaction_type_statement -> GAS_FORMATION . OF molecule
 
-    SEMICOLON       reduce using rule 20 (reaction_type_statement -> GAS_FORMATION .)
-    OF              shift and go to state 49
+    SEMICOLON       reduce using rule 28 (reaction_type_statement -> GAS_FORMATION .)
+    OF              shift and go to state 50
 
 
 state 20
 
-    (28) thermodynamic_statement -> ENTHALPY . OF reaction_expr
-    (32) thermodynamic_statement -> ENTHALPY . INFO reaction_expr
+    (36) thermodynamic_statement -> ENTHALPY . OF reaction_expr
+    (40) thermodynamic_statement -> ENTHALPY . INFO reaction_expr
 
-    OF              shift and go to state 50
-    INFO            shift and go to state 51
+    OF              shift and go to state 51
+    INFO            shift and go to state 52
 
 
 state 21
 
-    (29) thermodynamic_statement -> ENTROPY . OF reaction_expr
-    (33) thermodynamic_statement -> ENTROPY . INFO reaction_expr
+    (37) thermodynamic_statement -> ENTROPY . OF reaction_expr
+    (41) thermodynamic_statement -> ENTROPY . INFO reaction_expr
 
-    OF              shift and go to state 52
-    INFO            shift and go to state 53
+    OF              shift and go to state 53
+    INFO            shift and go to state 54
 
 
 state 22
 
-    (30) thermodynamic_statement -> GIBBS_ENERGY . OF reaction_expr
-    (34) thermodynamic_statement -> GIBBS_ENERGY . INFO reaction_expr
+    (38) thermodynamic_statement -> GIBBS_ENERGY . OF reaction_expr
+    (42) thermodynamic_statement -> GIBBS_ENERGY . INFO reaction_expr
 
-    OF              shift and go to state 54
-    INFO            shift and go to state 55
+    OF              shift and go to state 55
+    INFO            shift and go to state 56
 
 
 state 23
 
-    (31) thermodynamic_statement -> EQUILIBRIUM . OF reaction_expr
-    (35) thermodynamic_statement -> EQUILIBRIUM . INFO reaction_expr
+    (39) thermodynamic_statement -> EQUILIBRIUM . OF reaction_expr
+    (43) thermodynamic_statement -> EQUILIBRIUM . INFO reaction_expr
 
-    OF              shift and go to state 56
-    INFO            shift and go to state 57
+    OF              shift and go to state 57
+    INFO            shift and go to state 58
 
 
 state 24
 
-    (36) chemical_analysis_statement -> OXIDATION_STATES . OF molecule
-
-    OF              shift and go to state 58
-
-
-state 25
-
-    (37) chemical_analysis_statement -> LIMITING_REAGENT . OF reaction_expr
+    (44) chemical_analysis_statement -> OXIDATION_STATES . OF molecule
 
     OF              shift and go to state 59
 
 
-state 26
+state 25
 
-    (38) chemical_analysis_statement -> PERCENT_YIELD . OF reaction_expr
+    (45) chemical_analysis_statement -> LIMITING_REAGENT . OF reaction_expr
 
     OF              shift and go to state 60
 
 
-state 27
+state 26
 
-    (39) chemical_analysis_statement -> EMPIRICAL_FORMULA . OF molecule
+    (46) chemical_analysis_statement -> PERCENT_YIELD . OF reaction_expr
 
     OF              shift and go to state 61
 
 
-state 28
+state 27
 
-    (40) chemical_analysis_statement -> MOLECULAR_FORMULA . OF molecule
+    (47) chemical_analysis_statement -> EMPIRICAL_FORMULA . OF molecule
 
     OF              shift and go to state 62
 
 
-state 29
+state 28
 
-    (41) chemical_analysis_statement -> MOLAR_MASS . OF molecule
+    (48) chemical_analysis_statement -> MOLECULAR_FORMULA . OF molecule
 
     OF              shift and go to state 63
+
+
+state 29
+
+    (49) chemical_analysis_statement -> MOLAR_MASS . OF molecule
+
+    OF              shift and go to state 64
 
 
 state 30
@@ -557,37 +574,40 @@ state 30
     (8) statement -> . thermodynamic_statement
     (9) statement -> . chemical_analysis_statement
     (10) balance_statement -> . BALANCE reaction_expr
-    (11) predict_statement -> . PREDICT reactants_expr
-    (12) analyze_statement -> . ANALYZE molecule
-    (13) analyze_statement -> . ANALYZE molecule FOR IDENTIFIER
-    (14) reaction_type_statement -> . COMBUSTION
-    (15) reaction_type_statement -> . DECOMPOSITION
-    (16) reaction_type_statement -> . SINGLE_REPLACEMENT
-    (17) reaction_type_statement -> . DOUBLE_REPLACEMENT
-    (18) reaction_type_statement -> . ACID_BASE
-    (19) reaction_type_statement -> . PRECIPITATION
-    (20) reaction_type_statement -> . GAS_FORMATION
-    (21) reaction_type_statement -> . COMBUSTION OF molecule
-    (22) reaction_type_statement -> . DECOMPOSITION OF molecule
-    (23) reaction_type_statement -> . SINGLE_REPLACEMENT OF molecule
-    (24) reaction_type_statement -> . DOUBLE_REPLACEMENT OF molecule
-    (25) reaction_type_statement -> . ACID_BASE OF molecule
-    (26) reaction_type_statement -> . PRECIPITATION OF molecule
-    (27) reaction_type_statement -> . GAS_FORMATION OF molecule
-    (28) thermodynamic_statement -> . ENTHALPY OF reaction_expr
-    (29) thermodynamic_statement -> . ENTROPY OF reaction_expr
-    (30) thermodynamic_statement -> . GIBBS_ENERGY OF reaction_expr
-    (31) thermodynamic_statement -> . EQUILIBRIUM OF reaction_expr
-    (32) thermodynamic_statement -> . ENTHALPY INFO reaction_expr
-    (33) thermodynamic_statement -> . ENTROPY INFO reaction_expr
-    (34) thermodynamic_statement -> . GIBBS_ENERGY INFO reaction_expr
-    (35) thermodynamic_statement -> . EQUILIBRIUM INFO reaction_expr
-    (36) chemical_analysis_statement -> . OXIDATION_STATES OF molecule
-    (37) chemical_analysis_statement -> . LIMITING_REAGENT OF reaction_expr
-    (38) chemical_analysis_statement -> . PERCENT_YIELD OF reaction_expr
-    (39) chemical_analysis_statement -> . EMPIRICAL_FORMULA OF molecule
-    (40) chemical_analysis_statement -> . MOLECULAR_FORMULA OF molecule
-    (41) chemical_analysis_statement -> . MOLAR_MASS OF molecule
+    (11) predict_statement -> . PREDICT reaction_expr
+    (12) predict_statement -> . PREDICT reaction_expr IF condition
+    (13) predict_statement -> . PREDICT reactants_expr
+    (14) predict_statement -> . PREDICT reactants_expr IF condition
+    (20) analyze_statement -> . ANALYZE molecule
+    (21) analyze_statement -> . ANALYZE molecule FOR IDENTIFIER
+    (22) reaction_type_statement -> . COMBUSTION
+    (23) reaction_type_statement -> . DECOMPOSITION
+    (24) reaction_type_statement -> . SINGLE_REPLACEMENT
+    (25) reaction_type_statement -> . DOUBLE_REPLACEMENT
+    (26) reaction_type_statement -> . ACID_BASE
+    (27) reaction_type_statement -> . PRECIPITATION
+    (28) reaction_type_statement -> . GAS_FORMATION
+    (29) reaction_type_statement -> . COMBUSTION OF molecule
+    (30) reaction_type_statement -> . DECOMPOSITION OF molecule
+    (31) reaction_type_statement -> . SINGLE_REPLACEMENT OF molecule
+    (32) reaction_type_statement -> . DOUBLE_REPLACEMENT OF molecule
+    (33) reaction_type_statement -> . ACID_BASE OF molecule
+    (34) reaction_type_statement -> . PRECIPITATION OF molecule
+    (35) reaction_type_statement -> . GAS_FORMATION OF molecule
+    (36) thermodynamic_statement -> . ENTHALPY OF reaction_expr
+    (37) thermodynamic_statement -> . ENTROPY OF reaction_expr
+    (38) thermodynamic_statement -> . GIBBS_ENERGY OF reaction_expr
+    (39) thermodynamic_statement -> . EQUILIBRIUM OF reaction_expr
+    (40) thermodynamic_statement -> . ENTHALPY INFO reaction_expr
+    (41) thermodynamic_statement -> . ENTROPY INFO reaction_expr
+    (42) thermodynamic_statement -> . GIBBS_ENERGY INFO reaction_expr
+    (43) thermodynamic_statement -> . EQUILIBRIUM INFO reaction_expr
+    (44) chemical_analysis_statement -> . OXIDATION_STATES OF molecule
+    (45) chemical_analysis_statement -> . LIMITING_REAGENT OF reaction_expr
+    (46) chemical_analysis_statement -> . PERCENT_YIELD OF reaction_expr
+    (47) chemical_analysis_statement -> . EMPIRICAL_FORMULA OF molecule
+    (48) chemical_analysis_statement -> . MOLECULAR_FORMULA OF molecule
+    (49) chemical_analysis_statement -> . MOLAR_MASS OF molecule
 
     $end            reduce using rule 3 (statement_list -> statement SEMICOLON .)
     BALANCE         shift and go to state 10
@@ -612,7 +632,7 @@ state 30
     MOLAR_MASS      shift and go to state 29
 
     statement                      shift and go to state 3
-    statement_list                 shift and go to state 64
+    statement_list                 shift and go to state 65
     balance_statement              shift and go to state 4
     predict_statement              shift and go to state 5
     analyze_statement              shift and go to state 6
@@ -629,199 +649,167 @@ state 31
 
 state 32
 
-    (42) reaction_expr -> reactants_expr . ARROW products_expr
+    (50) reaction_expr -> reactants_expr . ARROW products_expr
 
-    ARROW           shift and go to state 65
+    ARROW           shift and go to state 66
 
 
 state 33
 
-    (43) reactants_expr -> chemical_term_list .
+    (51) reactants_expr -> chemical_term_list .
 
-    ARROW           reduce using rule 43 (reactants_expr -> chemical_term_list .)
-    SEMICOLON       reduce using rule 43 (reactants_expr -> chemical_term_list .)
+    ARROW           reduce using rule 51 (reactants_expr -> chemical_term_list .)
+    IF              reduce using rule 51 (reactants_expr -> chemical_term_list .)
+    SEMICOLON       reduce using rule 51 (reactants_expr -> chemical_term_list .)
 
 
 state 34
 
-    (45) chemical_term_list -> chemical_term . PLUS chemical_term_list
-    (46) chemical_term_list -> chemical_term .
+    (53) chemical_term_list -> chemical_term . PLUS chemical_term_list
+    (54) chemical_term_list -> chemical_term .
 
-    PLUS            shift and go to state 66
-    ARROW           reduce using rule 46 (chemical_term_list -> chemical_term .)
-    SEMICOLON       reduce using rule 46 (chemical_term_list -> chemical_term .)
+    PLUS            shift and go to state 67
+    ARROW           reduce using rule 54 (chemical_term_list -> chemical_term .)
+    IF              reduce using rule 54 (chemical_term_list -> chemical_term .)
+    SEMICOLON       reduce using rule 54 (chemical_term_list -> chemical_term .)
 
 
 state 35
 
-    (47) chemical_term -> INTEGER . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (55) chemical_term -> INTEGER . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
-    molecule                       shift and go to state 67
+    molecule                       shift and go to state 68
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
 state 36
 
-    (48) chemical_term -> molecule .
+    (56) chemical_term -> molecule .
 
-    PLUS            reduce using rule 48 (chemical_term -> molecule .)
-    ARROW           reduce using rule 48 (chemical_term -> molecule .)
-    SEMICOLON       reduce using rule 48 (chemical_term -> molecule .)
+    PLUS            reduce using rule 56 (chemical_term -> molecule .)
+    ARROW           reduce using rule 56 (chemical_term -> molecule .)
+    IF              reduce using rule 56 (chemical_term -> molecule .)
+    SEMICOLON       reduce using rule 56 (chemical_term -> molecule .)
 
 
 state 37
 
-    (49) molecule -> molecule_part . molecule
-    (50) molecule -> molecule_part .
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (57) molecule -> molecule_part . molecule
+    (58) molecule -> molecule_part .
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
-    PLUS            reduce using rule 50 (molecule -> molecule_part .)
-    ARROW           reduce using rule 50 (molecule -> molecule_part .)
-    SEMICOLON       reduce using rule 50 (molecule -> molecule_part .)
-    FOR             reduce using rule 50 (molecule -> molecule_part .)
-    RPAREN          reduce using rule 50 (molecule -> molecule_part .)
+    PLUS            reduce using rule 58 (molecule -> molecule_part .)
+    ARROW           reduce using rule 58 (molecule -> molecule_part .)
+    IF              reduce using rule 58 (molecule -> molecule_part .)
+    SEMICOLON       reduce using rule 58 (molecule -> molecule_part .)
+    FOR             reduce using rule 58 (molecule -> molecule_part .)
+    RPAREN          reduce using rule 58 (molecule -> molecule_part .)
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
     molecule_part                  shift and go to state 37
-    molecule                       shift and go to state 68
+    molecule                       shift and go to state 69
     element_group                  shift and go to state 38
 
 state 38
 
-    (51) molecule_part -> element_group .
+    (59) molecule_part -> element_group .
 
-    LPAREN          reduce using rule 51 (molecule_part -> element_group .)
-    ELEMENT_SYMBOL  reduce using rule 51 (molecule_part -> element_group .)
-    PLUS            reduce using rule 51 (molecule_part -> element_group .)
-    ARROW           reduce using rule 51 (molecule_part -> element_group .)
-    SEMICOLON       reduce using rule 51 (molecule_part -> element_group .)
-    FOR             reduce using rule 51 (molecule_part -> element_group .)
-    RPAREN          reduce using rule 51 (molecule_part -> element_group .)
+    LPAREN          reduce using rule 59 (molecule_part -> element_group .)
+    ELEMENT_SYMBOL  reduce using rule 59 (molecule_part -> element_group .)
+    PLUS            reduce using rule 59 (molecule_part -> element_group .)
+    ARROW           reduce using rule 59 (molecule_part -> element_group .)
+    IF              reduce using rule 59 (molecule_part -> element_group .)
+    SEMICOLON       reduce using rule 59 (molecule_part -> element_group .)
+    FOR             reduce using rule 59 (molecule_part -> element_group .)
+    RPAREN          reduce using rule 59 (molecule_part -> element_group .)
 
 
 state 39
 
-    (52) molecule_part -> LPAREN . molecule RPAREN INTEGER
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (60) molecule_part -> LPAREN . molecule RPAREN INTEGER
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
-    molecule                       shift and go to state 69
+    molecule                       shift and go to state 70
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
 state 40
 
-    (53) element_group -> ELEMENT_SYMBOL . INTEGER
-    (54) element_group -> ELEMENT_SYMBOL .
+    (61) element_group -> ELEMENT_SYMBOL . INTEGER
+    (62) element_group -> ELEMENT_SYMBOL .
 
-    INTEGER         shift and go to state 70
-    LPAREN          reduce using rule 54 (element_group -> ELEMENT_SYMBOL .)
-    ELEMENT_SYMBOL  reduce using rule 54 (element_group -> ELEMENT_SYMBOL .)
-    PLUS            reduce using rule 54 (element_group -> ELEMENT_SYMBOL .)
-    ARROW           reduce using rule 54 (element_group -> ELEMENT_SYMBOL .)
-    SEMICOLON       reduce using rule 54 (element_group -> ELEMENT_SYMBOL .)
-    FOR             reduce using rule 54 (element_group -> ELEMENT_SYMBOL .)
-    RPAREN          reduce using rule 54 (element_group -> ELEMENT_SYMBOL .)
+    INTEGER         shift and go to state 71
+    LPAREN          reduce using rule 62 (element_group -> ELEMENT_SYMBOL .)
+    ELEMENT_SYMBOL  reduce using rule 62 (element_group -> ELEMENT_SYMBOL .)
+    PLUS            reduce using rule 62 (element_group -> ELEMENT_SYMBOL .)
+    ARROW           reduce using rule 62 (element_group -> ELEMENT_SYMBOL .)
+    IF              reduce using rule 62 (element_group -> ELEMENT_SYMBOL .)
+    SEMICOLON       reduce using rule 62 (element_group -> ELEMENT_SYMBOL .)
+    FOR             reduce using rule 62 (element_group -> ELEMENT_SYMBOL .)
+    RPAREN          reduce using rule 62 (element_group -> ELEMENT_SYMBOL .)
 
 
 state 41
 
-    (11) predict_statement -> PREDICT reactants_expr .
+    (11) predict_statement -> PREDICT reaction_expr .
+    (12) predict_statement -> PREDICT reaction_expr . IF condition
 
-    SEMICOLON       reduce using rule 11 (predict_statement -> PREDICT reactants_expr .)
+    SEMICOLON       reduce using rule 11 (predict_statement -> PREDICT reaction_expr .)
+    IF              shift and go to state 72
 
 
 state 42
 
-    (12) analyze_statement -> ANALYZE molecule .
-    (13) analyze_statement -> ANALYZE molecule . FOR IDENTIFIER
+    (13) predict_statement -> PREDICT reactants_expr .
+    (14) predict_statement -> PREDICT reactants_expr . IF condition
+    (50) reaction_expr -> reactants_expr . ARROW products_expr
 
-    SEMICOLON       reduce using rule 12 (analyze_statement -> ANALYZE molecule .)
-    FOR             shift and go to state 71
+    SEMICOLON       reduce using rule 13 (predict_statement -> PREDICT reactants_expr .)
+    IF              shift and go to state 73
+    ARROW           shift and go to state 66
 
 
 state 43
 
-    (21) reaction_type_statement -> COMBUSTION OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (20) analyze_statement -> ANALYZE molecule .
+    (21) analyze_statement -> ANALYZE molecule . FOR IDENTIFIER
 
-    LPAREN          shift and go to state 39
-    ELEMENT_SYMBOL  shift and go to state 40
+    SEMICOLON       reduce using rule 20 (analyze_statement -> ANALYZE molecule .)
+    FOR             shift and go to state 74
 
-    molecule                       shift and go to state 72
-    molecule_part                  shift and go to state 37
-    element_group                  shift and go to state 38
 
 state 44
 
-    (22) reaction_type_statement -> DECOMPOSITION OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
-
-    LPAREN          shift and go to state 39
-    ELEMENT_SYMBOL  shift and go to state 40
-
-    molecule                       shift and go to state 73
-    molecule_part                  shift and go to state 37
-    element_group                  shift and go to state 38
-
-state 45
-
-    (23) reaction_type_statement -> SINGLE_REPLACEMENT OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
-
-    LPAREN          shift and go to state 39
-    ELEMENT_SYMBOL  shift and go to state 40
-
-    molecule                       shift and go to state 74
-    molecule_part                  shift and go to state 37
-    element_group                  shift and go to state 38
-
-state 46
-
-    (24) reaction_type_statement -> DOUBLE_REPLACEMENT OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (29) reaction_type_statement -> COMBUSTION OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
@@ -830,15 +818,15 @@ state 46
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 47
+state 45
 
-    (25) reaction_type_statement -> ACID_BASE OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (30) reaction_type_statement -> DECOMPOSITION OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
@@ -847,15 +835,15 @@ state 47
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 48
+state 46
 
-    (26) reaction_type_statement -> PRECIPITATION OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (31) reaction_type_statement -> SINGLE_REPLACEMENT OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
@@ -864,15 +852,15 @@ state 48
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 49
+state 47
 
-    (27) reaction_type_statement -> GAS_FORMATION OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (32) reaction_type_statement -> DOUBLE_REPLACEMENT OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
@@ -881,105 +869,72 @@ state 49
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 50
+state 48
 
-    (28) thermodynamic_statement -> ENTHALPY OF . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (33) reaction_type_statement -> ACID_BASE OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
-    INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
-    reaction_expr                  shift and go to state 79
-    reactants_expr                 shift and go to state 32
-    chemical_term_list             shift and go to state 33
-    chemical_term                  shift and go to state 34
-    molecule                       shift and go to state 36
+    molecule                       shift and go to state 79
+    molecule_part                  shift and go to state 37
+    element_group                  shift and go to state 38
+
+state 49
+
+    (34) reaction_type_statement -> PRECIPITATION OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
+
+    LPAREN          shift and go to state 39
+    ELEMENT_SYMBOL  shift and go to state 40
+
+    molecule                       shift and go to state 80
+    molecule_part                  shift and go to state 37
+    element_group                  shift and go to state 38
+
+state 50
+
+    (35) reaction_type_statement -> GAS_FORMATION OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
+
+    LPAREN          shift and go to state 39
+    ELEMENT_SYMBOL  shift and go to state 40
+
+    molecule                       shift and go to state 81
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
 state 51
 
-    (32) thermodynamic_statement -> ENTHALPY INFO . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
-
-    INTEGER         shift and go to state 35
-    LPAREN          shift and go to state 39
-    ELEMENT_SYMBOL  shift and go to state 40
-
-    reaction_expr                  shift and go to state 80
-    reactants_expr                 shift and go to state 32
-    chemical_term_list             shift and go to state 33
-    chemical_term                  shift and go to state 34
-    molecule                       shift and go to state 36
-    molecule_part                  shift and go to state 37
-    element_group                  shift and go to state 38
-
-state 52
-
-    (29) thermodynamic_statement -> ENTROPY OF . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
-
-    INTEGER         shift and go to state 35
-    LPAREN          shift and go to state 39
-    ELEMENT_SYMBOL  shift and go to state 40
-
-    reaction_expr                  shift and go to state 81
-    reactants_expr                 shift and go to state 32
-    chemical_term_list             shift and go to state 33
-    chemical_term                  shift and go to state 34
-    molecule                       shift and go to state 36
-    molecule_part                  shift and go to state 37
-    element_group                  shift and go to state 38
-
-state 53
-
-    (33) thermodynamic_statement -> ENTROPY INFO . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (36) thermodynamic_statement -> ENTHALPY OF . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
@@ -993,21 +948,21 @@ state 53
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 54
+state 52
 
-    (30) thermodynamic_statement -> GIBBS_ENERGY OF . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (40) thermodynamic_statement -> ENTHALPY INFO . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
@@ -1021,21 +976,21 @@ state 54
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 55
+state 53
 
-    (34) thermodynamic_statement -> GIBBS_ENERGY INFO . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (37) thermodynamic_statement -> ENTROPY OF . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
@@ -1049,21 +1004,21 @@ state 55
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 56
+state 54
 
-    (31) thermodynamic_statement -> EQUILIBRIUM OF . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (41) thermodynamic_statement -> ENTROPY INFO . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
@@ -1077,21 +1032,21 @@ state 56
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 57
+state 55
 
-    (35) thermodynamic_statement -> EQUILIBRIUM INFO . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (38) thermodynamic_statement -> GIBBS_ENERGY OF . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
@@ -1105,38 +1060,49 @@ state 57
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 58
+state 56
 
-    (36) chemical_analysis_statement -> OXIDATION_STATES OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (42) thermodynamic_statement -> GIBBS_ENERGY INFO . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
+    INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
-    molecule                       shift and go to state 87
+    reaction_expr                  shift and go to state 87
+    reactants_expr                 shift and go to state 32
+    chemical_term_list             shift and go to state 33
+    chemical_term                  shift and go to state 34
+    molecule                       shift and go to state 36
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 59
+state 57
 
-    (37) chemical_analysis_statement -> LIMITING_REAGENT OF . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (39) thermodynamic_statement -> EQUILIBRIUM OF . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
@@ -1150,21 +1116,21 @@ state 59
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 60
+state 58
 
-    (38) chemical_analysis_statement -> PERCENT_YIELD OF . reaction_expr
-    (42) reaction_expr -> . reactants_expr ARROW products_expr
-    (43) reactants_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (43) thermodynamic_statement -> EQUILIBRIUM INFO . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
@@ -1178,15 +1144,15 @@ state 60
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
-state 61
+state 59
 
-    (39) chemical_analysis_statement -> EMPIRICAL_FORMULA OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (44) chemical_analysis_statement -> OXIDATION_STATES OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
@@ -1195,336 +1161,641 @@ state 61
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
+state 60
+
+    (45) chemical_analysis_statement -> LIMITING_REAGENT OF . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
+
+    INTEGER         shift and go to state 35
+    LPAREN          shift and go to state 39
+    ELEMENT_SYMBOL  shift and go to state 40
+
+    reaction_expr                  shift and go to state 91
+    reactants_expr                 shift and go to state 32
+    chemical_term_list             shift and go to state 33
+    chemical_term                  shift and go to state 34
+    molecule                       shift and go to state 36
+    molecule_part                  shift and go to state 37
+    element_group                  shift and go to state 38
+
+state 61
+
+    (46) chemical_analysis_statement -> PERCENT_YIELD OF . reaction_expr
+    (50) reaction_expr -> . reactants_expr ARROW products_expr
+    (51) reactants_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
+
+    INTEGER         shift and go to state 35
+    LPAREN          shift and go to state 39
+    ELEMENT_SYMBOL  shift and go to state 40
+
+    reaction_expr                  shift and go to state 92
+    reactants_expr                 shift and go to state 32
+    chemical_term_list             shift and go to state 33
+    chemical_term                  shift and go to state 34
+    molecule                       shift and go to state 36
+    molecule_part                  shift and go to state 37
+    element_group                  shift and go to state 38
+
 state 62
 
-    (40) chemical_analysis_statement -> MOLECULAR_FORMULA OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (47) chemical_analysis_statement -> EMPIRICAL_FORMULA OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
-    molecule                       shift and go to state 91
+    molecule                       shift and go to state 93
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
 state 63
 
-    (41) chemical_analysis_statement -> MOLAR_MASS OF . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (48) chemical_analysis_statement -> MOLECULAR_FORMULA OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
-    molecule                       shift and go to state 92
+    molecule                       shift and go to state 94
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
 state 64
+
+    (49) chemical_analysis_statement -> MOLAR_MASS OF . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
+
+    LPAREN          shift and go to state 39
+    ELEMENT_SYMBOL  shift and go to state 40
+
+    molecule                       shift and go to state 95
+    molecule_part                  shift and go to state 37
+    element_group                  shift and go to state 38
+
+state 65
 
     (2) statement_list -> statement SEMICOLON statement_list .
 
     $end            reduce using rule 2 (statement_list -> statement SEMICOLON statement_list .)
 
 
-state 65
-
-    (42) reaction_expr -> reactants_expr ARROW . products_expr
-    (44) products_expr -> . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
-
-    INTEGER         shift and go to state 35
-    LPAREN          shift and go to state 39
-    ELEMENT_SYMBOL  shift and go to state 40
-
-    products_expr                  shift and go to state 93
-    chemical_term_list             shift and go to state 94
-    chemical_term                  shift and go to state 34
-    molecule                       shift and go to state 36
-    molecule_part                  shift and go to state 37
-    element_group                  shift and go to state 38
-
 state 66
 
-    (45) chemical_term_list -> chemical_term PLUS . chemical_term_list
-    (45) chemical_term_list -> . chemical_term PLUS chemical_term_list
-    (46) chemical_term_list -> . chemical_term
-    (47) chemical_term -> . INTEGER molecule
-    (48) chemical_term -> . molecule
-    (49) molecule -> . molecule_part molecule
-    (50) molecule -> . molecule_part
-    (51) molecule_part -> . element_group
-    (52) molecule_part -> . LPAREN molecule RPAREN INTEGER
-    (53) element_group -> . ELEMENT_SYMBOL INTEGER
-    (54) element_group -> . ELEMENT_SYMBOL
+    (50) reaction_expr -> reactants_expr ARROW . products_expr
+    (52) products_expr -> . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
     INTEGER         shift and go to state 35
     LPAREN          shift and go to state 39
     ELEMENT_SYMBOL  shift and go to state 40
 
+    products_expr                  shift and go to state 96
+    chemical_term_list             shift and go to state 97
     chemical_term                  shift and go to state 34
-    chemical_term_list             shift and go to state 95
     molecule                       shift and go to state 36
     molecule_part                  shift and go to state 37
     element_group                  shift and go to state 38
 
 state 67
 
-    (47) chemical_term -> INTEGER molecule .
+    (53) chemical_term_list -> chemical_term PLUS . chemical_term_list
+    (53) chemical_term_list -> . chemical_term PLUS chemical_term_list
+    (54) chemical_term_list -> . chemical_term
+    (55) chemical_term -> . INTEGER molecule
+    (56) chemical_term -> . molecule
+    (57) molecule -> . molecule_part molecule
+    (58) molecule -> . molecule_part
+    (59) molecule_part -> . element_group
+    (60) molecule_part -> . LPAREN molecule RPAREN INTEGER
+    (61) element_group -> . ELEMENT_SYMBOL INTEGER
+    (62) element_group -> . ELEMENT_SYMBOL
 
-    PLUS            reduce using rule 47 (chemical_term -> INTEGER molecule .)
-    ARROW           reduce using rule 47 (chemical_term -> INTEGER molecule .)
-    SEMICOLON       reduce using rule 47 (chemical_term -> INTEGER molecule .)
+    INTEGER         shift and go to state 35
+    LPAREN          shift and go to state 39
+    ELEMENT_SYMBOL  shift and go to state 40
 
+    chemical_term                  shift and go to state 34
+    chemical_term_list             shift and go to state 98
+    molecule                       shift and go to state 36
+    molecule_part                  shift and go to state 37
+    element_group                  shift and go to state 38
 
 state 68
 
-    (49) molecule -> molecule_part molecule .
+    (55) chemical_term -> INTEGER molecule .
 
-    PLUS            reduce using rule 49 (molecule -> molecule_part molecule .)
-    ARROW           reduce using rule 49 (molecule -> molecule_part molecule .)
-    SEMICOLON       reduce using rule 49 (molecule -> molecule_part molecule .)
-    FOR             reduce using rule 49 (molecule -> molecule_part molecule .)
-    RPAREN          reduce using rule 49 (molecule -> molecule_part molecule .)
+    PLUS            reduce using rule 55 (chemical_term -> INTEGER molecule .)
+    ARROW           reduce using rule 55 (chemical_term -> INTEGER molecule .)
+    IF              reduce using rule 55 (chemical_term -> INTEGER molecule .)
+    SEMICOLON       reduce using rule 55 (chemical_term -> INTEGER molecule .)
 
 
 state 69
 
-    (52) molecule_part -> LPAREN molecule . RPAREN INTEGER
+    (57) molecule -> molecule_part molecule .
 
-    RPAREN          shift and go to state 96
+    PLUS            reduce using rule 57 (molecule -> molecule_part molecule .)
+    ARROW           reduce using rule 57 (molecule -> molecule_part molecule .)
+    IF              reduce using rule 57 (molecule -> molecule_part molecule .)
+    SEMICOLON       reduce using rule 57 (molecule -> molecule_part molecule .)
+    FOR             reduce using rule 57 (molecule -> molecule_part molecule .)
+    RPAREN          reduce using rule 57 (molecule -> molecule_part molecule .)
 
 
 state 70
 
-    (53) element_group -> ELEMENT_SYMBOL INTEGER .
+    (60) molecule_part -> LPAREN molecule . RPAREN INTEGER
 
-    LPAREN          reduce using rule 53 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    ELEMENT_SYMBOL  reduce using rule 53 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    PLUS            reduce using rule 53 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    ARROW           reduce using rule 53 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    SEMICOLON       reduce using rule 53 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    FOR             reduce using rule 53 (element_group -> ELEMENT_SYMBOL INTEGER .)
-    RPAREN          reduce using rule 53 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    RPAREN          shift and go to state 99
 
 
 state 71
 
-    (13) analyze_statement -> ANALYZE molecule FOR . IDENTIFIER
+    (61) element_group -> ELEMENT_SYMBOL INTEGER .
 
-    IDENTIFIER      shift and go to state 97
+    LPAREN          reduce using rule 61 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    ELEMENT_SYMBOL  reduce using rule 61 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    PLUS            reduce using rule 61 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    ARROW           reduce using rule 61 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    IF              reduce using rule 61 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    SEMICOLON       reduce using rule 61 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    FOR             reduce using rule 61 (element_group -> ELEMENT_SYMBOL INTEGER .)
+    RPAREN          reduce using rule 61 (element_group -> ELEMENT_SYMBOL INTEGER .)
 
 
 state 72
 
-    (21) reaction_type_statement -> COMBUSTION OF molecule .
+    (12) predict_statement -> PREDICT reaction_expr IF . condition
+    (15) condition -> . condition AND condition
+    (16) condition -> . condition OR condition
+    (17) condition -> . CATALYST LPAREN ELEMENT_SYMBOL RPAREN
+    (18) condition -> . TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN
+    (19) condition -> . PRESSURE LPAREN INTEGER IDENTIFIER RPAREN
 
-    SEMICOLON       reduce using rule 21 (reaction_type_statement -> COMBUSTION OF molecule .)
+    CATALYST        shift and go to state 101
+    TEMPERATURE     shift and go to state 102
+    PRESSURE        shift and go to state 103
 
+    condition                      shift and go to state 100
 
 state 73
 
-    (22) reaction_type_statement -> DECOMPOSITION OF molecule .
+    (14) predict_statement -> PREDICT reactants_expr IF . condition
+    (15) condition -> . condition AND condition
+    (16) condition -> . condition OR condition
+    (17) condition -> . CATALYST LPAREN ELEMENT_SYMBOL RPAREN
+    (18) condition -> . TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN
+    (19) condition -> . PRESSURE LPAREN INTEGER IDENTIFIER RPAREN
 
-    SEMICOLON       reduce using rule 22 (reaction_type_statement -> DECOMPOSITION OF molecule .)
+    CATALYST        shift and go to state 101
+    TEMPERATURE     shift and go to state 102
+    PRESSURE        shift and go to state 103
 
+    condition                      shift and go to state 104
 
 state 74
 
-    (23) reaction_type_statement -> SINGLE_REPLACEMENT OF molecule .
+    (21) analyze_statement -> ANALYZE molecule FOR . IDENTIFIER
 
-    SEMICOLON       reduce using rule 23 (reaction_type_statement -> SINGLE_REPLACEMENT OF molecule .)
+    IDENTIFIER      shift and go to state 105
 
 
 state 75
 
-    (24) reaction_type_statement -> DOUBLE_REPLACEMENT OF molecule .
+    (29) reaction_type_statement -> COMBUSTION OF molecule .
 
-    SEMICOLON       reduce using rule 24 (reaction_type_statement -> DOUBLE_REPLACEMENT OF molecule .)
+    SEMICOLON       reduce using rule 29 (reaction_type_statement -> COMBUSTION OF molecule .)
 
 
 state 76
 
-    (25) reaction_type_statement -> ACID_BASE OF molecule .
+    (30) reaction_type_statement -> DECOMPOSITION OF molecule .
 
-    SEMICOLON       reduce using rule 25 (reaction_type_statement -> ACID_BASE OF molecule .)
+    SEMICOLON       reduce using rule 30 (reaction_type_statement -> DECOMPOSITION OF molecule .)
 
 
 state 77
 
-    (26) reaction_type_statement -> PRECIPITATION OF molecule .
+    (31) reaction_type_statement -> SINGLE_REPLACEMENT OF molecule .
 
-    SEMICOLON       reduce using rule 26 (reaction_type_statement -> PRECIPITATION OF molecule .)
+    SEMICOLON       reduce using rule 31 (reaction_type_statement -> SINGLE_REPLACEMENT OF molecule .)
 
 
 state 78
 
-    (27) reaction_type_statement -> GAS_FORMATION OF molecule .
+    (32) reaction_type_statement -> DOUBLE_REPLACEMENT OF molecule .
 
-    SEMICOLON       reduce using rule 27 (reaction_type_statement -> GAS_FORMATION OF molecule .)
+    SEMICOLON       reduce using rule 32 (reaction_type_statement -> DOUBLE_REPLACEMENT OF molecule .)
 
 
 state 79
 
-    (28) thermodynamic_statement -> ENTHALPY OF reaction_expr .
+    (33) reaction_type_statement -> ACID_BASE OF molecule .
 
-    SEMICOLON       reduce using rule 28 (thermodynamic_statement -> ENTHALPY OF reaction_expr .)
+    SEMICOLON       reduce using rule 33 (reaction_type_statement -> ACID_BASE OF molecule .)
 
 
 state 80
 
-    (32) thermodynamic_statement -> ENTHALPY INFO reaction_expr .
+    (34) reaction_type_statement -> PRECIPITATION OF molecule .
 
-    SEMICOLON       reduce using rule 32 (thermodynamic_statement -> ENTHALPY INFO reaction_expr .)
+    SEMICOLON       reduce using rule 34 (reaction_type_statement -> PRECIPITATION OF molecule .)
 
 
 state 81
 
-    (29) thermodynamic_statement -> ENTROPY OF reaction_expr .
+    (35) reaction_type_statement -> GAS_FORMATION OF molecule .
 
-    SEMICOLON       reduce using rule 29 (thermodynamic_statement -> ENTROPY OF reaction_expr .)
+    SEMICOLON       reduce using rule 35 (reaction_type_statement -> GAS_FORMATION OF molecule .)
 
 
 state 82
 
-    (33) thermodynamic_statement -> ENTROPY INFO reaction_expr .
+    (36) thermodynamic_statement -> ENTHALPY OF reaction_expr .
 
-    SEMICOLON       reduce using rule 33 (thermodynamic_statement -> ENTROPY INFO reaction_expr .)
+    SEMICOLON       reduce using rule 36 (thermodynamic_statement -> ENTHALPY OF reaction_expr .)
 
 
 state 83
 
-    (30) thermodynamic_statement -> GIBBS_ENERGY OF reaction_expr .
+    (40) thermodynamic_statement -> ENTHALPY INFO reaction_expr .
 
-    SEMICOLON       reduce using rule 30 (thermodynamic_statement -> GIBBS_ENERGY OF reaction_expr .)
+    SEMICOLON       reduce using rule 40 (thermodynamic_statement -> ENTHALPY INFO reaction_expr .)
 
 
 state 84
 
-    (34) thermodynamic_statement -> GIBBS_ENERGY INFO reaction_expr .
+    (37) thermodynamic_statement -> ENTROPY OF reaction_expr .
 
-    SEMICOLON       reduce using rule 34 (thermodynamic_statement -> GIBBS_ENERGY INFO reaction_expr .)
+    SEMICOLON       reduce using rule 37 (thermodynamic_statement -> ENTROPY OF reaction_expr .)
 
 
 state 85
 
-    (31) thermodynamic_statement -> EQUILIBRIUM OF reaction_expr .
+    (41) thermodynamic_statement -> ENTROPY INFO reaction_expr .
 
-    SEMICOLON       reduce using rule 31 (thermodynamic_statement -> EQUILIBRIUM OF reaction_expr .)
+    SEMICOLON       reduce using rule 41 (thermodynamic_statement -> ENTROPY INFO reaction_expr .)
 
 
 state 86
 
-    (35) thermodynamic_statement -> EQUILIBRIUM INFO reaction_expr .
+    (38) thermodynamic_statement -> GIBBS_ENERGY OF reaction_expr .
 
-    SEMICOLON       reduce using rule 35 (thermodynamic_statement -> EQUILIBRIUM INFO reaction_expr .)
+    SEMICOLON       reduce using rule 38 (thermodynamic_statement -> GIBBS_ENERGY OF reaction_expr .)
 
 
 state 87
 
-    (36) chemical_analysis_statement -> OXIDATION_STATES OF molecule .
+    (42) thermodynamic_statement -> GIBBS_ENERGY INFO reaction_expr .
 
-    SEMICOLON       reduce using rule 36 (chemical_analysis_statement -> OXIDATION_STATES OF molecule .)
+    SEMICOLON       reduce using rule 42 (thermodynamic_statement -> GIBBS_ENERGY INFO reaction_expr .)
 
 
 state 88
 
-    (37) chemical_analysis_statement -> LIMITING_REAGENT OF reaction_expr .
+    (39) thermodynamic_statement -> EQUILIBRIUM OF reaction_expr .
 
-    SEMICOLON       reduce using rule 37 (chemical_analysis_statement -> LIMITING_REAGENT OF reaction_expr .)
+    SEMICOLON       reduce using rule 39 (thermodynamic_statement -> EQUILIBRIUM OF reaction_expr .)
 
 
 state 89
 
-    (38) chemical_analysis_statement -> PERCENT_YIELD OF reaction_expr .
+    (43) thermodynamic_statement -> EQUILIBRIUM INFO reaction_expr .
 
-    SEMICOLON       reduce using rule 38 (chemical_analysis_statement -> PERCENT_YIELD OF reaction_expr .)
+    SEMICOLON       reduce using rule 43 (thermodynamic_statement -> EQUILIBRIUM INFO reaction_expr .)
 
 
 state 90
 
-    (39) chemical_analysis_statement -> EMPIRICAL_FORMULA OF molecule .
+    (44) chemical_analysis_statement -> OXIDATION_STATES OF molecule .
 
-    SEMICOLON       reduce using rule 39 (chemical_analysis_statement -> EMPIRICAL_FORMULA OF molecule .)
+    SEMICOLON       reduce using rule 44 (chemical_analysis_statement -> OXIDATION_STATES OF molecule .)
 
 
 state 91
 
-    (40) chemical_analysis_statement -> MOLECULAR_FORMULA OF molecule .
+    (45) chemical_analysis_statement -> LIMITING_REAGENT OF reaction_expr .
 
-    SEMICOLON       reduce using rule 40 (chemical_analysis_statement -> MOLECULAR_FORMULA OF molecule .)
+    SEMICOLON       reduce using rule 45 (chemical_analysis_statement -> LIMITING_REAGENT OF reaction_expr .)
 
 
 state 92
 
-    (41) chemical_analysis_statement -> MOLAR_MASS OF molecule .
+    (46) chemical_analysis_statement -> PERCENT_YIELD OF reaction_expr .
 
-    SEMICOLON       reduce using rule 41 (chemical_analysis_statement -> MOLAR_MASS OF molecule .)
+    SEMICOLON       reduce using rule 46 (chemical_analysis_statement -> PERCENT_YIELD OF reaction_expr .)
 
 
 state 93
 
-    (42) reaction_expr -> reactants_expr ARROW products_expr .
+    (47) chemical_analysis_statement -> EMPIRICAL_FORMULA OF molecule .
 
-    SEMICOLON       reduce using rule 42 (reaction_expr -> reactants_expr ARROW products_expr .)
+    SEMICOLON       reduce using rule 47 (chemical_analysis_statement -> EMPIRICAL_FORMULA OF molecule .)
 
 
 state 94
 
-    (44) products_expr -> chemical_term_list .
+    (48) chemical_analysis_statement -> MOLECULAR_FORMULA OF molecule .
 
-    SEMICOLON       reduce using rule 44 (products_expr -> chemical_term_list .)
+    SEMICOLON       reduce using rule 48 (chemical_analysis_statement -> MOLECULAR_FORMULA OF molecule .)
 
 
 state 95
 
-    (45) chemical_term_list -> chemical_term PLUS chemical_term_list .
+    (49) chemical_analysis_statement -> MOLAR_MASS OF molecule .
 
-    ARROW           reduce using rule 45 (chemical_term_list -> chemical_term PLUS chemical_term_list .)
-    SEMICOLON       reduce using rule 45 (chemical_term_list -> chemical_term PLUS chemical_term_list .)
+    SEMICOLON       reduce using rule 49 (chemical_analysis_statement -> MOLAR_MASS OF molecule .)
 
 
 state 96
 
-    (52) molecule_part -> LPAREN molecule RPAREN . INTEGER
+    (50) reaction_expr -> reactants_expr ARROW products_expr .
 
-    INTEGER         shift and go to state 98
+    SEMICOLON       reduce using rule 50 (reaction_expr -> reactants_expr ARROW products_expr .)
+    IF              reduce using rule 50 (reaction_expr -> reactants_expr ARROW products_expr .)
 
 
 state 97
 
-    (13) analyze_statement -> ANALYZE molecule FOR IDENTIFIER .
+    (52) products_expr -> chemical_term_list .
 
-    SEMICOLON       reduce using rule 13 (analyze_statement -> ANALYZE molecule FOR IDENTIFIER .)
+    SEMICOLON       reduce using rule 52 (products_expr -> chemical_term_list .)
+    IF              reduce using rule 52 (products_expr -> chemical_term_list .)
 
 
 state 98
 
-    (52) molecule_part -> LPAREN molecule RPAREN INTEGER .
+    (53) chemical_term_list -> chemical_term PLUS chemical_term_list .
 
-    LPAREN          reduce using rule 52 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
-    ELEMENT_SYMBOL  reduce using rule 52 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
-    PLUS            reduce using rule 52 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
-    ARROW           reduce using rule 52 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
-    SEMICOLON       reduce using rule 52 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
-    FOR             reduce using rule 52 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
-    RPAREN          reduce using rule 52 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    ARROW           reduce using rule 53 (chemical_term_list -> chemical_term PLUS chemical_term_list .)
+    IF              reduce using rule 53 (chemical_term_list -> chemical_term PLUS chemical_term_list .)
+    SEMICOLON       reduce using rule 53 (chemical_term_list -> chemical_term PLUS chemical_term_list .)
 
+
+state 99
+
+    (60) molecule_part -> LPAREN molecule RPAREN . INTEGER
+
+    INTEGER         shift and go to state 106
+
+
+state 100
+
+    (12) predict_statement -> PREDICT reaction_expr IF condition .
+    (15) condition -> condition . AND condition
+    (16) condition -> condition . OR condition
+
+    SEMICOLON       reduce using rule 12 (predict_statement -> PREDICT reaction_expr IF condition .)
+    AND             shift and go to state 107
+    OR              shift and go to state 108
+
+
+state 101
+
+    (17) condition -> CATALYST . LPAREN ELEMENT_SYMBOL RPAREN
+
+    LPAREN          shift and go to state 109
+
+
+state 102
+
+    (18) condition -> TEMPERATURE . LPAREN INTEGER IDENTIFIER RPAREN
+
+    LPAREN          shift and go to state 110
+
+
+state 103
+
+    (19) condition -> PRESSURE . LPAREN INTEGER IDENTIFIER RPAREN
+
+    LPAREN          shift and go to state 111
+
+
+state 104
+
+    (14) predict_statement -> PREDICT reactants_expr IF condition .
+    (15) condition -> condition . AND condition
+    (16) condition -> condition . OR condition
+
+    SEMICOLON       reduce using rule 14 (predict_statement -> PREDICT reactants_expr IF condition .)
+    AND             shift and go to state 107
+    OR              shift and go to state 108
+
+
+state 105
+
+    (21) analyze_statement -> ANALYZE molecule FOR IDENTIFIER .
+
+    SEMICOLON       reduce using rule 21 (analyze_statement -> ANALYZE molecule FOR IDENTIFIER .)
+
+
+state 106
+
+    (60) molecule_part -> LPAREN molecule RPAREN INTEGER .
+
+    LPAREN          reduce using rule 60 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    ELEMENT_SYMBOL  reduce using rule 60 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    PLUS            reduce using rule 60 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    ARROW           reduce using rule 60 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    IF              reduce using rule 60 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    SEMICOLON       reduce using rule 60 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    FOR             reduce using rule 60 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+    RPAREN          reduce using rule 60 (molecule_part -> LPAREN molecule RPAREN INTEGER .)
+
+
+state 107
+
+    (15) condition -> condition AND . condition
+    (15) condition -> . condition AND condition
+    (16) condition -> . condition OR condition
+    (17) condition -> . CATALYST LPAREN ELEMENT_SYMBOL RPAREN
+    (18) condition -> . TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN
+    (19) condition -> . PRESSURE LPAREN INTEGER IDENTIFIER RPAREN
+
+    CATALYST        shift and go to state 101
+    TEMPERATURE     shift and go to state 102
+    PRESSURE        shift and go to state 103
+
+    condition                      shift and go to state 112
+
+state 108
+
+    (16) condition -> condition OR . condition
+    (15) condition -> . condition AND condition
+    (16) condition -> . condition OR condition
+    (17) condition -> . CATALYST LPAREN ELEMENT_SYMBOL RPAREN
+    (18) condition -> . TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN
+    (19) condition -> . PRESSURE LPAREN INTEGER IDENTIFIER RPAREN
+
+    CATALYST        shift and go to state 101
+    TEMPERATURE     shift and go to state 102
+    PRESSURE        shift and go to state 103
+
+    condition                      shift and go to state 113
+
+state 109
+
+    (17) condition -> CATALYST LPAREN . ELEMENT_SYMBOL RPAREN
+
+    ELEMENT_SYMBOL  shift and go to state 114
+
+
+state 110
+
+    (18) condition -> TEMPERATURE LPAREN . INTEGER IDENTIFIER RPAREN
+
+    INTEGER         shift and go to state 115
+
+
+state 111
+
+    (19) condition -> PRESSURE LPAREN . INTEGER IDENTIFIER RPAREN
+
+    INTEGER         shift and go to state 116
+
+
+state 112
+
+    (15) condition -> condition AND condition .
+    (15) condition -> condition . AND condition
+    (16) condition -> condition . OR condition
+
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    SEMICOLON       reduce using rule 15 (condition -> condition AND condition .)
+    AND             shift and go to state 107
+    OR              shift and go to state 108
+
+  ! AND             [ reduce using rule 15 (condition -> condition AND condition .) ]
+  ! OR              [ reduce using rule 15 (condition -> condition AND condition .) ]
+
+
+state 113
+
+    (16) condition -> condition OR condition .
+    (15) condition -> condition . AND condition
+    (16) condition -> condition . OR condition
+
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    SEMICOLON       reduce using rule 16 (condition -> condition OR condition .)
+    AND             shift and go to state 107
+    OR              shift and go to state 108
+
+  ! AND             [ reduce using rule 16 (condition -> condition OR condition .) ]
+  ! OR              [ reduce using rule 16 (condition -> condition OR condition .) ]
+
+
+state 114
+
+    (17) condition -> CATALYST LPAREN ELEMENT_SYMBOL . RPAREN
+
+    RPAREN          shift and go to state 117
+
+
+state 115
+
+    (18) condition -> TEMPERATURE LPAREN INTEGER . IDENTIFIER RPAREN
+
+    IDENTIFIER      shift and go to state 118
+
+
+state 116
+
+    (19) condition -> PRESSURE LPAREN INTEGER . IDENTIFIER RPAREN
+
+    IDENTIFIER      shift and go to state 119
+
+
+state 117
+
+    (17) condition -> CATALYST LPAREN ELEMENT_SYMBOL RPAREN .
+
+    AND             reduce using rule 17 (condition -> CATALYST LPAREN ELEMENT_SYMBOL RPAREN .)
+    OR              reduce using rule 17 (condition -> CATALYST LPAREN ELEMENT_SYMBOL RPAREN .)
+    SEMICOLON       reduce using rule 17 (condition -> CATALYST LPAREN ELEMENT_SYMBOL RPAREN .)
+
+
+state 118
+
+    (18) condition -> TEMPERATURE LPAREN INTEGER IDENTIFIER . RPAREN
+
+    RPAREN          shift and go to state 120
+
+
+state 119
+
+    (19) condition -> PRESSURE LPAREN INTEGER IDENTIFIER . RPAREN
+
+    RPAREN          shift and go to state 121
+
+
+state 120
+
+    (18) condition -> TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN .
+
+    AND             reduce using rule 18 (condition -> TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN .)
+    OR              reduce using rule 18 (condition -> TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN .)
+    SEMICOLON       reduce using rule 18 (condition -> TEMPERATURE LPAREN INTEGER IDENTIFIER RPAREN .)
+
+
+state 121
+
+    (19) condition -> PRESSURE LPAREN INTEGER IDENTIFIER RPAREN .
+
+    AND             reduce using rule 19 (condition -> PRESSURE LPAREN INTEGER IDENTIFIER RPAREN .)
+    OR              reduce using rule 19 (condition -> PRESSURE LPAREN INTEGER IDENTIFIER RPAREN .)
+    SEMICOLON       reduce using rule 19 (condition -> PRESSURE LPAREN INTEGER IDENTIFIER RPAREN .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for AND in state 112 resolved as shift
+WARNING: shift/reduce conflict for OR in state 112 resolved as shift
+WARNING: shift/reduce conflict for AND in state 113 resolved as shift
+WARNING: shift/reduce conflict for OR in state 113 resolved as shift
