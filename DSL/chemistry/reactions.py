@@ -66,48 +66,131 @@ def predict_reaction(reactants: list):
 
         # Better handling of acid-base reactions
         if acid_formula.startswith("H") and "OH" in base_formula:
-            # Get the metal part of the base (e.g., Na from NaOH)
-            metal = base_formula.replace("OH", "")
-
-            # Get the non-metal part of the acid (e.g., Cl from HCl)
-            nonmetal = acid_formula[1:] if len(acid_formula) > 1 else ""
-
-            # Create salt and water products
+            metal = base_formula.split("OH")[0]
+            nonmetal = acid_formula[1:]
             salt = Compound(f"{metal}{nonmetal}")
             water = Compound("H2O")
 
-            return Reaction(reactants=[(1, acid), (1, base)],
-                           products=[(1, salt), (1, water)])
+            # Balance the reaction (e.g., 1 Ca(OH)2 + 2 HCl → 1 CaCl2 + 2 H2O)
+            acid_coeff = 2 if base.formula.count("OH") > 1 else 1  # Handle bases like Ca(OH)2
+            return Reaction(
+                reactants=[(acid_coeff, acid), (1, base)],
+                products=[(1, salt), (acid_coeff, water)]  # Match coefficients
+            )
 
     # 3. Metal + Oxygen -> Metal oxide
     if _contains_metal_and_oxygen(reactants):
         metal, oxygen = _get_metal_and_oxygen(reactants)
-        metal_formula = metal.formula
+        metal_oxide = Compound(f"{metal.formula}O")
+        # Balance the reaction: 2Mg + O2 → 2MgO
+        return Reaction(
+            reactants=[(2, metal), (1, oxygen)],  # Changed coefficients
+            products=[(2, metal_oxide)]  # Changed coefficients
+        )
 
-        # Create metal oxide product
-        metal_oxide = Compound(f"{metal_formula}O")
-
-        return Reaction(reactants=[(1, metal), (1, oxygen)],
-                       products=[(1, metal_oxide)])
+    # 3.1 Decomposition of water
+    if len(reactants) == 1 and reactants[0].formula == "H2O":
+        H2 = Compound("H2")
+        O2 = Compound("O2")
+        return Reaction(
+            reactants=[(2, reactants[0])],  # 2H2O
+            products=[(2, H2), (1, O2)]  # → 2H2 + O2
+        )
 
     # 4. Simple synthesis reaction: A + B -> AB
+    #    Validated Synthesis Reactions
     if len(reactants) == 2:
-        comp1, comp2 = reactants[0], reactants[1]
-        # This is still simplified but a bit more realistic
-        try:
-            # Try to create a compound from the combined formulas
-            product = Compound(f"{comp1.formula}{comp2.formula}")
-            return Reaction(reactants=[(1, comp1), (1, comp2)], products=[(1, product)])
-        except ValueError:
-            # If the combined formula isn't valid, try a different approach
-            try:
-                # Try the other way around
-                product = Compound(f"{comp2.formula}{comp1.formula}")
-                return Reaction(reactants=[(1, comp1), (1, comp2)], products=[(1, product)])
-            except ValueError:
-                pass
+        # Check if both reactants are elements (e.g., Na + Cl)
+        if all(len(parse_formula(r.formula)) == 1 for r in reactants):
+            elem1 = list(parse_formula(reactants[0].formula).keys())[0]  # e.g., "Na"
+            elem2 = list(parse_formula(reactants[1].formula).keys())[0]  # e.g., "Cl"
 
-    raise Exception("Reaction prediction not implemented for given reactants.")
+            # Get valencies from a predefined dictionary (add this to elements.py)
+            valency = {
+                'Na': +1, 'K': +1, 'Mg': +2, 'Al': +3,
+                'Cl': -1, 'O': -2, 'S': -2, 'N': -3
+            }
+
+            # Determine formula based on valency (e.g., Na+ + Cl- → NaCl)
+            if elem1 in valency and elem2 in valency:
+                ratio = (abs(valency[elem2]), abs(valency[elem1]))  # Simplify ratio
+                formula = f"{elem1}{ratio[0]}{elem2}{ratio[1]}" if ratio != (1, 1) else f"{elem1}{elem2}"
+                try:
+                    product = Compound(formula)
+                    return Reaction(reactants=[(1, reactants[0]), (1, reactants[1])],
+                                    products=[(1, product)])
+                except ValueError:
+                    pass  # Fall through to other reaction types
+
+        # If not elements, check for valid compound combinations
+    REACTIVITY_SERIES = ["K", "Na", "Li", "Ca", "Mg", "Al", "Zn", "Fe", "Pb", "Cu", "Ag"]
+    # 5. Metal oxide reduction with H2
+    def _is_metal(formula: str) -> bool:
+        """Check if the formula represents a pure metal (e.g., "Cu", "Zn")"""
+        return formula in REACTIVITY_SERIES
+
+    if len(reactants) == 2:
+        # Check if one reactant is a metal and the other is a compound
+        metal = None
+        compound = None
+        for r in reactants:
+            if _is_metal(r.formula):  # Helper function to check if formula is a pure metal
+                metal = r
+            else:
+                compound = r
+
+        if metal and compound:
+            # Extract metal from compound (e.g., "Cu" from "CuSO4")
+            compound_elements = parse_formula(compound.formula)
+            displaced_metal = next((elem for elem in compound_elements if _is_metal(elem)), None)
+
+            # Check reactivity
+            if displaced_metal and REACTIVITY_SERIES.index(metal.formula) < REACTIVITY_SERIES.index(displaced_metal):
+                # Create new compound (e.g., ZnSO4)
+                new_compound_formula = compound.formula.replace(displaced_metal, metal.formula)
+                try:
+                    new_compound = Compound(new_compound_formula)
+                    displaced = Compound(displaced_metal)
+                    return Reaction(
+                        reactants=[(1, metal), (1, compound)],
+                        products=[(1, new_compound), (1, displaced)]
+                    )
+                except ValueError:
+                    pass
+    # 6. Acid + Carbonate → Salt + CO2 + H2O
+    if len(reactants) == 2:
+        # Find acid (starts with H) and carbonate (ends with CO3)
+        acid = next((r for r in reactants if r.formula.startswith("H")), None)
+        carbonate = next((r for r in reactants if "CO3" in r.formula), None)
+
+        if acid and carbonate:
+            # Extract metal from carbonate (e.g., "Ca" from "CaCO3")
+            metal = carbonate.formula.split("CO3")[0]
+            salt = Compound(f"{metal}Cl")  # Assumes acid is HCl (generalize if needed)
+            return Reaction(
+                reactants=[(1, acid), (1, carbonate)],
+                products=[(1, salt), (1, Compound("CO2")), (1, Compound("H2O"))]
+            )
+
+    # 7. Ammonia Combustion: 4NH3 + 5O2 → 4NO + 6H2O
+    if _contains_compounds(reactants, ["NH3", "O2"]):
+        NH3 = _find_compound(reactants, "NH3")
+        O2 = _find_compound(reactants, "O2")
+        return Reaction(
+            reactants=[(4, NH3), (5, O2)],
+            products=[(4, Compound("NO")), (6, Compound("H2O"))]
+        )
+
+    # 8. Active Metal + Water → Metal Hydroxide + H2
+    if len(reactants) == 2 and any(r.formula == "H2O" for r in reactants):
+        metal = next((r for r in reactants if _is_metal(r.formula)), None)
+        if metal and metal.formula in REACTIVITY_SERIES:  # Highly reactive metals
+            hydroxide = Compound(f"{metal.formula}OH")
+            return Reaction(
+                reactants=[(2, metal), (2, Compound("H2O"))],
+                products=[(2, hydroxide), (1, Compound("H2"))]
+            )
+
 
 def _contains_compounds(compounds, formulas):
     """Check if the list of compounds contains all the specified formulas."""

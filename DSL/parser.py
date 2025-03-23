@@ -1,128 +1,120 @@
 """
 DSL/parser.py
 Parser for ChemDSL using PLY (Python Lex-Yacc)
-
-This module uses the tokens from lexer.py and builds an abstract syntax tree (AST)
-using production rules. The AST nodes are defined in DSL/ast_nodes/nodes.py.
 """
 
 import ply.yacc as yacc
 from DSL.lexer import tokens
 from DSL.ast_nodes import nodes
 
-
 # Grammar production rules
 
 def p_program(p):
     """program : statement_list"""
+    print(f"[Parser] Building ProgramNode with {len(p[1])} statements")
     p[0] = nodes.ProgramNode(p[1])
 
+def p_statement_list(p):
+    """statement_list : statement SEMICOLON statement_list
+                     | statement SEMICOLON"""
+    p[0] = [p[1]] + (p[3] if len(p) > 3 else [])
 
-def p_statement_list_multiple(p):
-    """statement_list : statement SEMICOLON statement_list"""
-    p[0] = [p[1]] + p[3]
-
-
-def p_statement_list_single(p):
-    """statement_list : statement SEMICOLON"""
-    p[0] = [p[1]]
-
-
-def p_statement_balance(p):
-    """statement : balance_statement"""
+def p_statement(p):
+    """statement : balance_statement
+                 | predict_statement
+                 | analyze_statement"""
     p[0] = p[1]
-
-
-def p_statement_predict(p):
-    """statement : predict_statement"""
-    p[0] = p[1]
-
 
 def p_balance_statement(p):
     """balance_statement : BALANCE reaction_expr"""
+    print(f"[Parser] Building BalanceStatementNode")
     p[0] = nodes.BalanceStatementNode(p[2])
 
-
 def p_predict_statement(p):
-    """predict_statement : PREDICT reaction_expr"""
-    p[0] = nodes.PredictStatementNode(p[2])
+    """predict_statement : PREDICT reactants_expr"""
+    # Create a ReactionExpressionNode with reactants and empty products
+    reaction_expr = nodes.ReactionExpressionNode(reactants=p[2], products=[])
+    p[0] = nodes.PredictStatementNode(reaction_expr)
 
+def p_analyze_statement(p):
+    """analyze_statement : ANALYZE molecule
+                         | ANALYZE molecule FOR IDENTIFIER"""
+    detail_level = 'basic'
+    if len(p) > 3:
+        if p[4].lower() == 'all':
+            detail_level = 'all'
+        else:
+            raise SyntaxError(f"Invalid detail specifier: {p[4]}. Use 'all'.")
+    p[0] = nodes.AnalyzeStatementNode(target=p[2], detail_level=detail_level)
 
 def p_reaction_expr(p):
     """reaction_expr : reactants_expr ARROW products_expr"""
-    p[0] = nodes.ReactionExpressionNode(p[1], p[3])
-
+    p[0] = nodes.ReactionExpressionNode(reactants=p[1], products=p[3])
 
 def p_reactants_expr(p):
     """reactants_expr : chemical_term_list"""
     p[0] = p[1]
 
-
 def p_products_expr(p):
     """products_expr : chemical_term_list"""
     p[0] = p[1]
 
+def p_chemical_term_list(p):
+    """chemical_term_list : chemical_term PLUS chemical_term_list
+                          | chemical_term"""
+    p[0] = [p[1]] + (p[3] if len(p) > 3 else [])
 
-def p_chemical_term_list_multiple(p):
-    """chemical_term_list : chemical_term PLUS chemical_term_list"""
-    p[0] = [p[1]] + p[3]
+def p_chemical_term(p):
+    """chemical_term : INTEGER molecule
+                     | molecule"""
+    if len(p) == 3:
+        if p[1] <= 0:
+            raise SyntaxError("Coefficient must be a positive integer.")
+        p[0] = nodes.ChemicalTermNode(coefficient=p[1], molecule=p[2])
+    else:
+        p[0] = nodes.ChemicalTermNode(coefficient=1, molecule=p[1])
 
+def p_molecule(p):
+    """molecule : molecule_part molecule
+                | molecule_part"""
+    if len(p) == 3:
+        # Combine elements from both parts
+        combined_elements = p[1].elements + p[2].elements
+        p[0] = nodes.MoleculeNode(elements=combined_elements)
+    else:
+        p[0] = p[1]
 
-def p_chemical_term_list_single(p):
-    """chemical_term_list : chemical_term"""
-    p[0] = [p[1]]
+def p_molecule_part(p):
+    """molecule_part : element_group
+                     | LPAREN molecule RPAREN INTEGER"""
+    if len(p) == 5:
+        # Handle parentheses: e.g., (NO3)2
+        multiplied_elements = [
+            nodes.ElementGroupNode(elem.symbol, elem.count * p[4])
+            for elem in p[2].elements
+        ]
+        p[0] = nodes.MoleculeNode(elements=multiplied_elements)
+    else:
+        # Single element group
+        p[0] = nodes.MoleculeNode(elements=[p[1]])
 
-
-def p_chemical_term_with_coeff(p):
-    """chemical_term : INTEGER molecule"""
-    p[0] = nodes.ChemicalTermNode(coefficient=p[1], molecule=p[2])
-
-
-def p_chemical_term_without_coeff(p):
-    """chemical_term : molecule"""
-    p[0] = nodes.ChemicalTermNode(coefficient=1, molecule=p[1])
-
-
-def p_molecule_paren(p):
-    """molecule : LPAREN molecule RPAREN INTEGER"""
-    # Multiply counts inside parentheses by the trailing integer
-    p[0] = nodes.MoleculeNode(p[2].elements, multiplier=p[4])
-
-
-def p_molecule_simple(p):
-    """molecule : molecule element_group"""
-    # Append element group to molecule
-    p[1].elements.append(p[2])
-    p[0] = p[1]
-
-
-def p_molecule_single(p):
-    """molecule : element_group"""
-    p[0] = nodes.MoleculeNode([p[1]])
-
-
-def p_element_group_with_count(p):
-    """element_group : ELEMENT_SYMBOL INTEGER"""
-    p[0] = nodes.ElementGroupNode(symbol=p[1], count=p[2])
-
-
-def p_element_group_single(p):
-    """element_group : ELEMENT_SYMBOL"""
-    p[0] = nodes.ElementGroupNode(symbol=p[1], count=1)
-
+def p_element_group(p):
+    """element_group : ELEMENT_SYMBOL INTEGER
+                     | ELEMENT_SYMBOL"""
+    if len(p) == 3:
+        p[0] = nodes.ElementGroupNode(symbol=p[1], count=p[2])
+    else:
+        p[0] = nodes.ElementGroupNode(symbol=p[1], count=1)
 
 def p_error(p):
     if p:
-        print(f"Syntax error at '{p.value}' (line {p.lineno})")
+        raise SyntaxError(f"Syntax error at '{p.value}' (line {p.lineno})")
     else:
-        print("Syntax error at EOF")
+        raise SyntaxError("Syntax error at end of input.")
 
-
+# Build the parser
 parser = yacc.yacc()
 
-
 def parse(data: str):
-    """
-    Parse the input ChemDSL code and return the AST.
-    """
+    """Parse input and return AST."""
     return parser.parse(data, lexer=__import__("DSL.lexer", fromlist=["lexer"]).lexer)

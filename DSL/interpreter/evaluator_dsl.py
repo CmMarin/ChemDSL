@@ -5,21 +5,28 @@ Implements the Evaluator that traverses the AST and executes the ChemDSL program
 """
 
 from DSL.ast_nodes import nodes
-from DSL.chemistry import balancer, reactions, compounds
+from DSL.chemistry import balancer, reactions, compounds, ELEMENTS
+from DSL.chemistry.elements import COMPOUNDS
 from DSL.interpreter.enviroment_dsl import Environment
 from DSL.utils.error_handler import ErrorHandler
 
 class Evaluator:
     def __init__(self):
         self.env = Environment()
+        from DSL.utils.error_handler import ErrorHandler
         self.error_handler = ErrorHandler()
 
     def evaluate(self, node):
         try:
+            # Check if node is None before proceeding
+            if node is None:
+                return None
+
             method_name = 'eval_' + node.__class__.__name__
             evaluator = getattr(self, method_name, self.generic_eval)
             return evaluator(node)
         except Exception as e:
+            # Use the updated error handler
             self.error_handler.add_error(str(e))
             return f"Evaluation error: {str(e)}"
 
@@ -34,64 +41,153 @@ class Evaluator:
                 results.append(result)
         return "\n".join(str(r) for r in results)
 
+    # In evaluator_dsl.py
+    def format_formula(self, formula: str) -> str:
+        """Convert formulas like 'CuN2O6' to 'Cu(NO3)2'."""
+        from collections import defaultdict
+        import re
+
+        # Split formula into elements and counts (e.g., [('Cu', 1), ('N', 2), ('O', 6)])
+        elements = re.findall(r'([A-Z][a-z]*)(\d*)', formula)
+        elements = [(elem, int(count) if count else 1) for elem, count in elements]
+
+        # Find the greatest common divisor (GCD) of counts
+        counts = [count for _, count in elements[1:]]  # Skip the first element (e.g., Cu)
+        if not counts:
+            return formula
+
+        from math import gcd
+        common_divisor = counts[0]
+        for count in counts[1:]:
+            common_divisor = gcd(common_divisor, count)
+
+        # If a common divisor exists, format as a subgroup
+        if common_divisor > 1:
+            subgroup = "".join([f"{elem}{count // common_divisor}" for elem, count in elements[1:]])
+            return f"{elements[0][0]}({subgroup}){common_divisor}"
+        return formula
+
     def eval_BalanceStatementNode(self, node):
         try:
-            # Evaluate the reaction expression to get reactants and products
             reaction = self.eval_ReactionExpressionNode(node.reaction_expr)
+            reactants = [(coeff, compound) for coeff, compound in reaction.reactants]
+            products = [(coeff, compound) for coeff, compound in reaction.products]
+            coeffs = balancer.balance_reaction(reactants, products)
+            if not coeffs:
+                return "Could not balance reaction."
 
-            # Use the balancer to compute coefficients
-            coeffs = balancer.balance_reaction(reaction.reactants, reaction.products)
-
-            if coeffs is None:
-                return "Could not balance reaction. The reaction may be invalid or too complex."
-
-            # Construct a balanced reaction string
-            n_reactants = len(reaction.reactants)
+            # Format formulas with parentheses
             balanced_reactants = []
-            balanced_products = []
-
-            for i, (orig_coeff, compound) in enumerate(reaction.reactants):
+            for i, (orig_coeff, compound) in enumerate(reactants):
                 new_coeff = coeffs[i] * orig_coeff
-                if new_coeff == 1:
-                    balanced_reactants.append(f"{compound.formula}")
-                else:
-                    balanced_reactants.append(f"{new_coeff}{compound.formula}")
+                formula = self.format_formula(compound.formula)  # Apply formatting
+                balanced_reactants.append(f"{new_coeff if new_coeff != 1 else ''}{formula}")
 
-            for j, (orig_coeff, compound) in enumerate(reaction.products):
-                new_coeff = coeffs[n_reactants + j] * orig_coeff
-                if new_coeff == 1:
-                    balanced_products.append(f"{compound.formula}")
-                else:
-                    balanced_products.append(f"{new_coeff}{compound.formula}")
+            balanced_products = []
+            for j, (orig_coeff, compound) in enumerate(products):
+                new_coeff = coeffs[len(reactants) + j] * orig_coeff
+                formula = self.format_formula(compound.formula)  # Apply formatting
+                balanced_products.append(f"{new_coeff if new_coeff != 1 else ''}{formula}")
 
-            reactants_str = " + ".join(balanced_reactants)
-            products_str = " + ".join(balanced_products)
-
-            return f"Balanced Reaction: {reactants_str} -> {products_str}"
+            return f"Balanced Reaction: {' + '.join(balanced_reactants)} → {' + '.join(balanced_products)}"
 
         except Exception as e:
             self.error_handler.add_error(f"Balance error: {str(e)}")
-            return f"Could not balance reaction: {str(e)}"
+            return f"Balance failed: {str(e)}"
 
     def eval_PredictStatementNode(self, node):
+        print("\n=== EVALUATION ===")
+        print("Evaluating PredictStatementNode")
+        print(f"Raw reactants: {node.reaction_expr.reactants}")
         try:
             # Evaluate the reaction expression to get reactants
-            reaction = self.eval_ReactionExpressionNode(node.reaction_expr)
+            reaction_expr = self.eval_ReactionExpressionNode(node.reaction_expr)
 
             # Extract compounds from reactants (ignoring coefficients)
-            reactant_compounds = [r[1] for r in reaction.reactants]
+            reactant_compounds = [r[1] for r in reaction_expr.reactants]
 
             # Try to predict the products
-            predicted = reactions.predict_reaction(reactant_compounds)
+            predicted_reaction = reactions.predict_reaction(reactant_compounds)
 
-            if predicted:
-                return f"Predicted Reaction: {predicted}"
+            if predicted_reaction:
+                # Store the predicted reaction in the environment for later reference
+                reaction_str = str(predicted_reaction)
+                self.env.define('last_predicted_reaction', reaction_str)
+
+                return f"Predicted Reaction: {reaction_str}"
             else:
                 return "Could not predict reaction products."
 
         except Exception as e:
             self.error_handler.add_error(f"Prediction error: {str(e)}")
             return f"Prediction Error: {str(e)}"
+
+    def eval_AnalyzeStatementNode(self, node):
+        try:
+            compound = self.evaluate(node.target)
+            formula = compound.formula
+            composition = compound.composition
+            elements = composition.keys()
+
+            if len(elements) == 1:
+                # Element analysis
+                element_symbol = list(elements)[0]
+                element_data = ELEMENTS.get(element_symbol)
+                if not element_data:
+                    raise ValueError(f"Element '{element_symbol}' not found.")
+
+                result = {
+                    'is_analysis_result': True,
+                    'element': element_symbol,
+                    'name': element_data['name'],
+                    'atomic_weight': element_data['atomic_weight'],
+                    'state': element_data['state'],
+                    'group': element_data.get('group', 'N/A'),
+                    'electronegativity': element_data.get('electronegativity', 'N/A'),
+                    'common_compounds': element_data.get('common_compounds', []),
+                    'common_reactions': element_data.get('common_reactions', []),
+                    'detail_level': node.detail_level
+                }
+            else:
+                # Compound analysis
+                molar_mass = compound.molar_mass()
+                result = {
+                    'is_analysis_result': True,
+                    'compound': formula,
+                    'molar_mass': molar_mass,
+                    'composition': composition,
+                    'detail_level': node.detail_level
+                }
+
+                # Add additional compound information if available
+                if formula in COMPOUNDS:
+                    compound_data = COMPOUNDS[formula]
+                    # Only add detailed info if detail_level is 'all'
+                    if node.detail_level == 'all':
+                        result.update({
+                            'name': compound_data['name'],
+                            'state': compound_data['state'],
+                            'classification': compound_data['classification'],
+                            'density': compound_data['density'],
+                            'melting_point': compound_data['melting_point'],
+                            'boiling_point': compound_data['boiling_point'],
+                            'solubility': compound_data['solubility'],
+                            'acidity': compound_data['acidity'],
+                            'common_uses': compound_data['common_uses'],
+                            'hazards': compound_data['hazards']
+                        })
+                    # Always add name and basic info even for basic detail level
+                    else:
+                        result.update({
+                            'name': compound_data['name'],
+                            'state': compound_data['state'],
+                            'classification': compound_data['classification']
+                        })
+
+            return result
+        except Exception as e:
+            self.error_handler.add_error(f"Analysis error: {str(e)}")
+            return f"Analysis Error: {str(e)}"
 
     def eval_ReactionExpressionNode(self, node):
         # Evaluate each term in reactants and products
@@ -147,3 +243,5 @@ class Evaluator:
 
         # Return element symbol with count
         return f"{node.symbol}{node.count if node.count != 1 else ''}"
+
+

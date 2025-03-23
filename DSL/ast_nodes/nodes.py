@@ -1,24 +1,29 @@
 """
 DSL/ast_nodes/nodes.py
-AST node definitions for ChemDSL.
+
+Defines the AST nodes for the ChemDSL parser.
 """
 
-class Node:
+class ASTNode:
+    """Base class for all AST nodes."""
     def accept(self, visitor):
         method_name = 'visit_' + self.__class__.__name__
         visitor_method = getattr(visitor, method_name, visitor.generic_visit)
         return visitor_method(self)
 
 
-class ProgramNode(Node):
+class ProgramNode(ASTNode):
+    """Represents a complete ChemDSL program."""
     def __init__(self, statements):
-        self.statements = statements
+        self.statements = statements or []
 
     def __repr__(self):
-        return f"ProgramNode(statements={self.statements})"
+        statements = "\n  ".join(str(stmt) for stmt in self.statements)
+        return f"ProgramNode(\n  {statements}\n)"
 
 
-class BalanceStatementNode(Node):
+class BalanceStatementNode(ASTNode):
+    """Represents a balance statement."""
     def __init__(self, reaction_expr):
         self.reaction_expr = reaction_expr
 
@@ -26,46 +31,62 @@ class BalanceStatementNode(Node):
         return f"BalanceStatementNode({self.reaction_expr})"
 
 
-class PredictStatementNode(Node):
+class PredictStatementNode(ASTNode):
+    """Represents a predict statement."""
     def __init__(self, reaction_expr):
         self.reaction_expr = reaction_expr
 
     def __repr__(self):
-        return f"PredictStatementNode({self.reaction_expr})"
+        return f"Predict({self.reaction_expr})"
 
 
-class ReactionExpressionNode(Node):
+class ReactionExpressionNode(ASTNode):
+    """Represents a chemical reaction expression (reactants -> products)."""
     def __init__(self, reactants, products):
-        self.reactants = reactants  # list of ChemicalTermNode
-        self.products = products    # list of ChemicalTermNode
+        self.reactants = reactants or []
+        self.products = products or []
 
     def __repr__(self):
-        return f"ReactionExpressionNode(reactants={self.reactants}, products={self.products})"
+        reactants = ", ".join(str(r) for r in self.reactants)
+        products = ", ".join(str(p) for p in self.products)
+        return f"ReactionExpressionNode(reactants=[{reactants}], products=[{products}])"
 
 
-class ChemicalTermNode(Node):
+class ChemicalTermNode(ASTNode):
+    """Represents a chemical term (coefficient * molecule)."""
     def __init__(self, coefficient, molecule):
         self.coefficient = coefficient
-        self.molecule = molecule  # MoleculeNode
+        self.molecule = molecule
 
     def __repr__(self):
-        return f"ChemicalTermNode({self.coefficient} * {self.molecule})"
+        return f"ChemicalTermNode(coefficient={self.coefficient}, molecule={self.molecule})"
 
 
-class MoleculeNode(Node):
+class MoleculeNode(ASTNode):
+    """Represents a molecule (collection of element groups)."""
     def __init__(self, elements, multiplier=1):
-        # elements is a list of ElementGroupNode
         self.elements = elements
         self.multiplier = multiplier
 
     def __repr__(self):
-        return f"MoleculeNode(elements={self.elements}, multiplier={self.multiplier})"
+        elements = ", ".join(str(e) for e in self.elements)
+        return f"MoleculeNode(elements=[{elements}])"
 
 
-class ElementGroupNode(Node):
-    def __init__(self, symbol, count):
+class ElementGroupNode(ASTNode):
+    """Represents an element group (element symbol with optional count)."""
+    def __init__(self, symbol, count=1):
         self.symbol = symbol
         self.count = count
 
     def __repr__(self):
         return f"ElementGroupNode(symbol='{self.symbol}', count={self.count})"
+
+class AnalyzeStatementNode(ASTNode):
+    """Represents an analyze statement."""
+    def __init__(self, target, detail_level='basic'):
+        self.target = target  # This is a MoleculeNode
+        self.detail_level = detail_level
+
+    def __repr__(self):
+        return f"AnalyzeStatementNode(target={self.target}, detail_level={self.detail_level})"

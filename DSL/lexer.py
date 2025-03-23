@@ -66,7 +66,7 @@ t_ASSIGN = r'='
 t_POSITIVE = r'\+'
 t_NEGATIVE = r'-'
 
-# Keywords mapping
+# Keywords mapping (case-insensitive)
 keywords = {
     'balance': 'BALANCE',
     'predict': 'PREDICT',
@@ -119,14 +119,6 @@ keywords = {
     'time': 'TIME',
 }
 
-# Concentration units (for potential future use)
-concentrations = {
-    'M': 'MOLARITY',
-    'mol/L': 'MOLARITY',
-    'mmol/L': 'MOLARITY',
-    '%': 'PERCENT',
-}
-
 # Valid element symbols – a set for quick lookup
 ELEMENT_SYMBOLS = {
     'H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
@@ -143,57 +135,45 @@ ELEMENT_SYMBOLS = {
     'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og'
 }
 
-
-def t_IDENTIFIER(t):
-    r'[a-z][a-zA-Z0-9_]*'
-    t.type = keywords.get(t.value, 'IDENTIFIER')
-    return t
-
-
 def t_ELEMENT_SYMBOL(t):
     r'[A-Z][a-z]?'
-    if t.value in ELEMENT_SYMBOLS:
-        t.type = 'ELEMENT_SYMBOL'
-    else:
-        t.type = 'IDENTIFIER'
+    if t.value not in ELEMENT_SYMBOLS:
+        raise SyntaxError(f"Invalid element symbol: {t.value}")
+    t.type = 'ELEMENT_SYMBOL'
     return t
-
-
-def t_FLOAT(t):
-    r'\d+\.\d*'
-    t.value = float(t.value)
-    return t
-
 
 def t_INTEGER(t):
     r'\d+'
     t.value = int(t.value)
     return t
 
+def t_IDENTIFIER(t):
+    r'[a-zA-Z_][a-zA-Z0-9_]*'  # Allow underscores
+    t.type = keywords.get(t.value.lower(), 'IDENTIFIER')
+    return t
+
+def t_FLOAT(t):
+    r'\d+\.\d*'
+    t.value = float(t.value)
+    return t
 
 def t_STRING(t):
     r'"[^"]*"'
     t.value = t.value[1:-1]  # Remove quotes
     return t
 
-
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-
 # Ignore spaces and tabs
 t_ignore = ' \t'
 
-
 def t_error(t):
-    print(f"Illegal character '{t.value[0]}' at line {t.lexer.lineno}")
-    t.lexer.skip(1)
-
+    raise SyntaxError(f"Illegal character '{t.value[0]}' at line {t.lexer.lineno}")
 
 # Build the lexer
 lexer = lex.lex()
-
 
 def tokenize(data: str) -> List[Dict[str, Any]]:
     """
@@ -213,7 +193,6 @@ def tokenize(data: str) -> List[Dict[str, Any]]:
         })
     return result
 
-
 # Test function (for debugging)
 def test_lexer(data: str) -> None:
     lexer.input(data)
@@ -222,3 +201,16 @@ def test_lexer(data: str) -> None:
         if not tok:
             break
         print(tok)
+
+def tokenize(data: str) -> List[Dict[str, Any]]:
+    """Tokenize input string with logging"""
+    print("=== LEXER TOKENIZATION ===")
+    lexer.input(data)
+    result = []
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        print(f"Token: Type='{tok.type}', Value='{tok.value}', Position={tok.lexpos}")
+        result.append({'type': tok.type, 'value': tok.value})
+    return result

@@ -7,7 +7,18 @@ In production, you might use linear algebra or other methods.
 """
 
 import itertools
+import math
 from DSL.chemistry.compounds import parse_formula
+
+
+def find_gcd(numbers):
+    """
+    Find the greatest common divisor of a list of numbers.
+    """
+    result = numbers[0]
+    for num in numbers[1:]:
+        result = math.gcd(result, num)
+    return result
 
 
 def is_balanced(reactants, products, coeffs):
@@ -19,54 +30,56 @@ def is_balanced(reactants, products, coeffs):
     element_set = set()
     # Extract all elements from both sides of the reaction
     for _, compound in reactants + products:
-        # Ensure we're using the formula attribute if compound is a Compound object
-        formula = compound.formula if hasattr(compound, 'formula') else compound
-        element_set.update(parse_formula(formula).keys())
+        # Ensure we're accessing the formula attribute correctly
+        if hasattr(compound, 'formula'):
+            formula = compound.formula
+        else:
+            formula = compound
+
+        # Parse the formula to get elements
+        parsed_formula = parse_formula(formula)
+        element_set.update(parsed_formula.keys())
 
     # Check if each element is balanced on both sides
     for element in element_set:
         # Sum the count of each element on the reactant side
-        left = sum(coeffs[i] * parse_formula(reactants[i][1].formula).get(element, 0) * reactants[i][0]
-                   for i in range(len(reactants)))
+        left = 0
+        for i, (orig_coeff, compound) in enumerate(reactants):
+            if hasattr(compound, 'formula'):
+                formula = compound.formula
+            else:
+                formula = compound
+
+            parsed_formula = parse_formula(formula)
+            element_count = parsed_formula.get(element, 0)
+            left += coeffs[i] * element_count * orig_coeff
+
         # Sum the count of each element on the product side
-        right = sum(coeffs[len(reactants) + j] * parse_formula(products[j][1].formula).get(element, 0) * products[j][0]
-                    for j in range(len(products)))
+        right = 0
+        for j, (orig_coeff, compound) in enumerate(products):
+            if hasattr(compound, 'formula'):
+                formula = compound.formula
+            else:
+                formula = compound
+
+            parsed_formula = parse_formula(formula)
+            element_count = parsed_formula.get(element, 0)
+            right += coeffs[len(reactants) + j] * element_count * orig_coeff
 
         if left != right:
             return False
     return True
 
-def balance_reaction(reactants, products, max_coeff=10):
-    """
-    reactants and products: lists of tuples (coefficient, Compound) where Compound has a .formula attribute.
-    Returns the balanced coefficients if found.
-    """
+
+def balance_reaction(reactants, products, max_coeff=20):
     n = len(reactants)
     m = len(products)
     total = n + m
 
-    # Start with the simplest coefficients
-    for coeffs in itertools.product(range(1, max_coeff+1), repeat=total):
-        if coeffs[0] != 1:  # Convention: first coefficient should be 1
-            continue
+    for coeffs in itertools.product(range(1, max_coeff + 1), repeat=total):
 
         if is_balanced(reactants, products, coeffs):
-            # Reduce to smallest whole-number coefficient set
             gcd = find_gcd(coeffs)
-            if gcd > 1:
-                return tuple(c // gcd for c in coeffs)
-            return coeffs
+            return tuple(c // gcd for c in coeffs)
 
     return None
-
-def find_gcd(numbers):
-    """Find the greatest common divisor of a list of numbers."""
-    from math import gcd
-    from functools import reduce
-
-    def gcd_pair(a, b):
-        while b:
-            a, b = b, a % b
-        return a
-
-    return reduce(gcd_pair, numbers)
