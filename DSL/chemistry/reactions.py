@@ -184,7 +184,7 @@ def predict_reaction(reactants: list):
     # 8. Active Metal + Water → Metal Hydroxide + H2
     if len(reactants) == 2 and any(r.formula == "H2O" for r in reactants):
         metal = next((r for r in reactants if _is_metal(r.formula)), None)
-        if metal and metal.formula in ["Na", "K", "Ca"]:  # Highly reactive metals
+        if metal and metal.formula in REACTIVITY_SERIES:  # Highly reactive metals
             hydroxide = Compound(f"{metal.formula}OH")
             return Reaction(
                 reactants=[(2, metal), (2, Compound("H2O"))],

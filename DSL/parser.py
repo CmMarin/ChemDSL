@@ -11,6 +11,7 @@ from DSL.ast_nodes import nodes
 
 def p_program(p):
     """program : statement_list"""
+    print(f"[Parser] Building ProgramNode with {len(p[1])} statements")
     p[0] = nodes.ProgramNode(p[1])
 
 def p_statement_list(p):
@@ -20,11 +21,13 @@ def p_statement_list(p):
 
 def p_statement(p):
     """statement : balance_statement
-                 | predict_statement"""
+                 | predict_statement
+                 | analyze_statement"""
     p[0] = p[1]
 
 def p_balance_statement(p):
     """balance_statement : BALANCE reaction_expr"""
+    print(f"[Parser] Building BalanceStatementNode")
     p[0] = nodes.BalanceStatementNode(p[2])
 
 def p_predict_statement(p):
@@ -32,6 +35,17 @@ def p_predict_statement(p):
     # Create a ReactionExpressionNode with reactants and empty products
     reaction_expr = nodes.ReactionExpressionNode(reactants=p[2], products=[])
     p[0] = nodes.PredictStatementNode(reaction_expr)
+
+def p_analyze_statement(p):
+    """analyze_statement : ANALYZE molecule
+                         | ANALYZE molecule FOR IDENTIFIER"""
+    detail_level = 'basic'
+    if len(p) > 3:
+        if p[4].lower() == 'all':
+            detail_level = 'all'
+        else:
+            raise SyntaxError(f"Invalid detail specifier: {p[4]}. Use 'all'.")
+    p[0] = nodes.AnalyzeStatementNode(target=p[2], detail_level=detail_level)
 
 def p_reaction_expr(p):
     """reaction_expr : reactants_expr ARROW products_expr"""

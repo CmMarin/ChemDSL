@@ -201,3 +201,16 @@ def test_lexer(data: str) -> None:
         if not tok:
             break
         print(tok)
+
+def tokenize(data: str) -> List[Dict[str, Any]]:
+    """Tokenize input string with logging"""
+    print("=== LEXER TOKENIZATION ===")
+    lexer.input(data)
+    result = []
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        print(f"Token: Type='{tok.type}', Value='{tok.value}', Position={tok.lexpos}")
+        result.append({'type': tok.type, 'value': tok.value})
+    return result

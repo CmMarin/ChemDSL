@@ -81,3 +81,12 @@ class ElementGroupNode(ASTNode):
 
     def __repr__(self):
         return f"ElementGroupNode(symbol='{self.symbol}', count={self.count})"
+
+class AnalyzeStatementNode(ASTNode):
+    """Represents an analyze statement."""
+    def __init__(self, target, detail_level='basic'):
+        self.target = target  # This is a MoleculeNode
+        self.detail_level = detail_level
+
+    def __repr__(self):
+        return f"AnalyzeStatementNode(target={self.target}, detail_level={self.detail_level})"

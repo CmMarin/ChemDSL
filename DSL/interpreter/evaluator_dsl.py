@@ -5,7 +5,8 @@ Implements the Evaluator that traverses the AST and executes the ChemDSL program
 """
 
 from DSL.ast_nodes import nodes
-from DSL.chemistry import balancer, reactions, compounds
+from DSL.chemistry import balancer, reactions, compounds, ELEMENTS
+from DSL.chemistry.elements import COMPOUNDS
 from DSL.interpreter.enviroment_dsl import Environment
 from DSL.utils.error_handler import ErrorHandler
 
@@ -95,6 +96,9 @@ class Evaluator:
             return f"Balance failed: {str(e)}"
 
     def eval_PredictStatementNode(self, node):
+        print("\n=== EVALUATION ===")
+        print("Evaluating PredictStatementNode")
+        print(f"Raw reactants: {node.reaction_expr.reactants}")
         try:
             # Evaluate the reaction expression to get reactants
             reaction_expr = self.eval_ReactionExpressionNode(node.reaction_expr)
@@ -117,6 +121,73 @@ class Evaluator:
         except Exception as e:
             self.error_handler.add_error(f"Prediction error: {str(e)}")
             return f"Prediction Error: {str(e)}"
+
+    def eval_AnalyzeStatementNode(self, node):
+        try:
+            compound = self.evaluate(node.target)
+            formula = compound.formula
+            composition = compound.composition
+            elements = composition.keys()
+
+            if len(elements) == 1:
+                # Element analysis
+                element_symbol = list(elements)[0]
+                element_data = ELEMENTS.get(element_symbol)
+                if not element_data:
+                    raise ValueError(f"Element '{element_symbol}' not found.")
+
+                result = {
+                    'is_analysis_result': True,
+                    'element': element_symbol,
+                    'name': element_data['name'],
+                    'atomic_weight': element_data['atomic_weight'],
+                    'state': element_data['state'],
+                    'group': element_data.get('group', 'N/A'),
+                    'electronegativity': element_data.get('electronegativity', 'N/A'),
+                    'common_compounds': element_data.get('common_compounds', []),
+                    'common_reactions': element_data.get('common_reactions', []),
+                    'detail_level': node.detail_level
+                }
+            else:
+                # Compound analysis
+                molar_mass = compound.molar_mass()
+                result = {
+                    'is_analysis_result': True,
+                    'compound': formula,
+                    'molar_mass': molar_mass,
+                    'composition': composition,
+                    'detail_level': node.detail_level
+                }
+
+                # Add additional compound information if available
+                if formula in COMPOUNDS:
+                    compound_data = COMPOUNDS[formula]
+                    # Only add detailed info if detail_level is 'all'
+                    if node.detail_level == 'all':
+                        result.update({
+                            'name': compound_data['name'],
+                            'state': compound_data['state'],
+                            'classification': compound_data['classification'],
+                            'density': compound_data['density'],
+                            'melting_point': compound_data['melting_point'],
+                            'boiling_point': compound_data['boiling_point'],
+                            'solubility': compound_data['solubility'],
+                            'acidity': compound_data['acidity'],
+                            'common_uses': compound_data['common_uses'],
+                            'hazards': compound_data['hazards']
+                        })
+                    # Always add name and basic info even for basic detail level
+                    else:
+                        result.update({
+                            'name': compound_data['name'],
+                            'state': compound_data['state'],
+                            'classification': compound_data['classification']
+                        })
+
+            return result
+        except Exception as e:
+            self.error_handler.add_error(f"Analysis error: {str(e)}")
+            return f"Analysis Error: {str(e)}"
 
     def eval_ReactionExpressionNode(self, node):
         # Evaluate each term in reactants and products
@@ -172,3 +243,5 @@ class Evaluator:
 
         # Return element symbol with count
         return f"{node.symbol}{node.count if node.count != 1 else ''}"
+
+
