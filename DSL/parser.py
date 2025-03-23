@@ -23,7 +23,8 @@ def p_statement(p):
     """statement : balance_statement
                  | predict_statement
                  | analyze_statement
-                 | reaction_type_statement"""
+                 | reaction_type_statement
+                 | thermodynamic_statement"""
     print(f"[Parser] Processing statement: {p[1]}")  # Debug print
     p[0] = p[1]
 
@@ -69,6 +70,21 @@ def p_reaction_type_statement(p):
         p[0] = nodes.ReactionTypeNode(p[1].upper(), None)  # e.g., p[1] = 'COMBUSTION'
     else:
         p[0] = nodes.ReactionTypeNode(p[1].upper(), p[3])  # e.g., p[1] = 'DECOMPOSITION', p[3] = molecule
+
+def p_thermodynamic_statement(p):
+    """thermodynamic_statement : ENTHALPY OF reaction_expr
+                               | ENTROPY OF reaction_expr
+                               | GIBBS_ENERGY OF reaction_expr
+                               | EQUILIBRIUM OF reaction_expr
+                               | ENTHALPY INFO reaction_expr
+                               | ENTROPY INFO reaction_expr
+                               | GIBBS_ENERGY INFO reaction_expr
+                               | EQUILIBRIUM INFO reaction_expr"""
+    if p[2] == 'of':
+        p[0] = nodes.ThermodynamicNode(p[1].upper(), p[3], info=False)
+    elif p[2] == 'info':
+        p[0] = nodes.ThermodynamicNode(p[1].upper(), p[3], info=True)
+
 
 def p_reaction_expr(p):
     """reaction_expr : reactants_expr ARROW products_expr"""

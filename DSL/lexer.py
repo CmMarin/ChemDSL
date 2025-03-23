@@ -15,7 +15,7 @@ tokens = (
     # Keywords
     'BALANCE', 'PREDICT', 'ANALYZE', 'QUERY',
     'ELEMENT', 'COMPOUND', 'REACTION', 'YIELD',
-    'WITH', 'FOR', 'OF',
+    'WITH', 'FOR', 'OF', 'INFO',
     'REDOX', 'ALGEBRAIC', 'HALF_REACTION', 'OXIDATION_NUMBER',
 
     # Reaction types
@@ -79,6 +79,7 @@ keywords = {
     'with': 'WITH',
     'for': 'FOR',
     'of': 'OF',
+    'info': 'INFO',
     'redox': 'REDOX',
     'algebraic': 'ALGEBRAIC',
     'half-reaction': 'HALF_REACTION',

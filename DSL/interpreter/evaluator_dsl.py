@@ -276,6 +276,75 @@ class Evaluator:
 
         return ReactionWrapper(reactants, products)
 
+    def eval_ThermodynamicNode(self, node):
+        """Evaluate a thermodynamic property statement."""
+        reaction = self.eval_ReactionExpressionNode(node.reaction_expr)
+        reaction_str = str(reaction)  # Get the reaction as a string
+
+        # Define thermodynamic data (for demonstration purposes)
+        thermodynamic_data = {
+            'ENTHALPY': {
+                'H2 + O2 -> H2O': '-285.8 kJ/mol',
+                'CH4 + 2O2 -> CO2 + 2H2O': '-890.4 kJ/mol',
+                '2H2 + O2 -> 2H2O': '-571.6 kJ/mol',
+                'N2 + 3H2 -> 2NH3': '-92.4 kJ/mol',
+            },
+            'ENTROPY': {
+                'H2 + O2 -> H2O': '-163.2 J/(mol·K)',
+                'CH4 + 2O2 -> CO2 + 2H2O': '-242.8 J/(mol·K)',
+                '2H2 + O2 -> 2H2O': '-326.4 J/(mol·K)',
+                'N2 + 3H2 -> 2NH3': '-198.3 J/(mol·K)',
+            },
+            'GIBBS_ENERGY': {
+                'H2 + O2 -> H2O': '-237.1 kJ/mol',
+                'CH4 + 2O2 -> CO2 + 2H2O': '-818.3 kJ/mol',
+                '2H2 + O2 -> 2H2O': '-474.2 kJ/mol',
+                'N2 + 3H2 -> 2NH3': '-33.3 kJ/mol',
+            },
+            'EQUILIBRIUM': {
+                'H2 + O2 -> H2O': '1.0e+40',
+                'CH4 + 2O2 -> CO2 + 2H2O': '1.0e+30',
+                '2H2 + O2 -> 2H2O': '1.0e+40',
+                'N2 + 3H2 -> 2NH3': '1.0e+5',
+            }
+        }
+
+        # Define explanations for reactions
+        reaction_explanations = {
+            'H2 + O2 -> H2O': (
+                "This is the combustion of hydrogen gas (H2) with oxygen gas (O2) to form water (H2O). "
+                "It is a highly exothermic reaction, releasing a large amount of energy."
+            ),
+            'CH4 + 2O2 -> CO2 + 2H2O': (
+                "This is the combustion of methane (CH4) with oxygen gas (O2) to form carbon dioxide (CO2) and water (H2O). "
+                "It is a common reaction in natural gas combustion."
+            ),
+            '2H2 + O2 -> 2H2O': (
+                "This is the balanced combustion of hydrogen gas (H2) with oxygen gas (O2) to form water (H2O). "
+                "It releases twice the energy of the single-molecule reaction."
+            ),
+            'N2 + 3H2 -> 2NH3': (
+                "This is the Haber process, where nitrogen gas (N2) reacts with hydrogen gas (H2) to form ammonia (NH3). "
+                "It is a key reaction in fertilizer production."
+            )
+        }
+
+        # Get the property type (e.g., 'ENTHALPY', 'ENTROPY')
+        property_type = node.property_type
+
+        if node.info:
+            # Display explanation of the reaction
+            if reaction_str in reaction_explanations:
+                return f"Explanation for {reaction_str}:\n{reaction_explanations[reaction_str]}"
+            else:
+                return f"No explanation available for {reaction_str}."
+        else:
+            # Display thermodynamic property
+            if reaction_str in thermodynamic_data[property_type]:
+                value = thermodynamic_data[property_type][reaction_str]
+                return f"{property_type.capitalize()} for {reaction_str}: {value}"
+            else:
+                return f"No thermodynamic data available for {reaction_str}."
     def eval_ChemicalTermNode(self, node):
         # Evaluate the molecule to get a Compound object
         compound = self.evaluate(node.molecule)

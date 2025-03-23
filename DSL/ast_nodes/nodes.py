@@ -50,6 +50,15 @@ class ReactionTypeNode(ASTNode):
             return f"ReactionTypeNode(type={self.reaction_type}, target={self.target})"
         return f"ReactionTypeNode(type={self.reaction_type})"
 
+class ThermodynamicNode(ASTNode):
+    """Represents a thermodynamic property statement."""
+    def __init__(self, property_type, reaction_expr, info=False):
+        self.property_type = property_type  # e.g., 'ENTHALPY', 'ENTROPY'
+        self.reaction_expr = reaction_expr  # The reaction expression
+        self.info = info  # Whether to display info or the property value
+
+    def __repr__(self):
+        return f"ThermodynamicNode(property_type={self.property_type}, reaction_expr={self.reaction_expr}, info={self.info})"
 
 class ReactionExpressionNode(ASTNode):
     """Represents a chemical reaction expression (reactants -> products)."""
