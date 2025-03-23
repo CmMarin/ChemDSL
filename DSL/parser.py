@@ -24,8 +24,8 @@ def p_statement(p):
                  | predict_statement
                  | analyze_statement
                  | reaction_type_statement
-                 | thermodynamic_statement"""
-    print(f"[Parser] Processing statement: {p[1]}")  # Debug print
+                 | thermodynamic_statement
+                 | chemical_analysis_statement"""
     p[0] = p[1]
 
 
@@ -85,6 +85,15 @@ def p_thermodynamic_statement(p):
     elif p[2] == 'info':
         p[0] = nodes.ThermodynamicNode(p[1].upper(), p[3], info=True)
 
+
+def p_chemical_analysis_statement(p):
+    """chemical_analysis_statement : OXIDATION_STATES OF molecule
+                                   | LIMITING_REAGENT OF reaction_expr
+                                   | PERCENT_YIELD OF reaction_expr
+                                   | EMPIRICAL_FORMULA OF molecule
+                                   | MOLECULAR_FORMULA OF molecule
+                                   | MOLAR_MASS OF molecule"""
+    p[0] = nodes.ChemicalAnalysisNode(p[1].upper(), p[3])
 
 def p_reaction_expr(p):
     """reaction_expr : reactants_expr ARROW products_expr"""

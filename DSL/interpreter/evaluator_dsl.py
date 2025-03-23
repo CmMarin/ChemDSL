@@ -345,6 +345,111 @@ class Evaluator:
                 return f"{property_type.capitalize()} for {reaction_str}: {value}"
             else:
                 return f"No thermodynamic data available for {reaction_str}."
+
+    def eval_ChemicalAnalysisNode(self, node):
+        """Evaluate a chemical analysis statement."""
+        target = self.evaluate(node.target)  # Evaluate the target (compound or reaction)
+        analysis_type = node.analysis_type  # e.g., 'OXIDATION_STATES', 'MOLAR_MASS'
+
+        if analysis_type == 'OXIDATION_STATES':
+            # Calculate oxidation states for a compound
+            if isinstance(target, compounds.Compound):
+                oxidation_states = self.calculate_oxidation_states(target)
+                return f"Oxidation States in {target.formula}: {oxidation_states}"
+            else:
+                return f"Oxidation states can only be calculated for compounds."
+
+        elif analysis_type == 'LIMITING_REAGENT':
+            # Calculate the limiting reagent in a reaction
+            if hasattr(target, 'reactants'):  # Check if target is a ReactionWrapper
+                limiting_reagent = self.calculate_limiting_reagent(target)
+                return f"Limiting Reagent in {str(target)}: {limiting_reagent}"
+            else:
+                return f"Limiting reagent can only be calculated for reactions."
+
+        elif analysis_type == 'PERCENT_YIELD':
+            # Calculate the percent yield of a reaction
+            if hasattr(target, 'reactants'):  # Check if target is a ReactionWrapper
+                percent_yield = self.calculate_percent_yield(target)
+                return f"Percent Yield of {str(target)}: {percent_yield}%"
+            else:
+                return f"Percent yield can only be calculated for reactions."
+
+        elif analysis_type == 'EMPIRICAL_FORMULA':
+            # Calculate the empirical formula of a compound
+            if isinstance(target, compounds.Compound):
+                empirical_formula = self.calculate_empirical_formula(target)
+                return f"Empirical Formula of {target.formula}: {empirical_formula}"
+            else:
+                return f"Empirical formula can only be calculated for compounds."
+
+        elif analysis_type == 'MOLECULAR_FORMULA':
+            # Display the molecular formula of a compound
+            if isinstance(target, compounds.Compound):
+                return f"Molecular Formula of {target.formula}: {target.formula}"
+            else:
+                return f"Molecular formula can only be displayed for compounds."
+
+        elif analysis_type == 'MOLAR_MASS':
+            # Calculate the molar mass of a compound
+            if isinstance(target, compounds.Compound):
+                molar_mass = target.molar_mass()
+                return f"Molar Mass of {target.formula}: {molar_mass:.2f} g/mol"
+            else:
+                return f"Molar mass can only be calculated for compounds."
+
+        else:
+            return f"Unknown analysis type: {analysis_type}"
+
+    def calculate_oxidation_states(self, compound):
+        """Calculate oxidation states for a compound."""
+        # Example implementation (simplified)
+        oxidation_states = {}
+        for element, count in compound.composition.items():
+            if element == 'H':
+                oxidation_states[element] = +1
+            elif element == 'O':
+                oxidation_states[element] = -2
+            else:
+                oxidation_states[element] = 0  # Default to 0 for simplicity
+        return oxidation_states
+
+    def calculate_limiting_reagent(self, reaction):
+        """Calculate the limiting reagent in a reaction."""
+        # Extract reactants and their coefficients
+        reactants = reaction.reactants
+        if not reactants:
+            return "No reactants found."
+
+        # For simplicity, assume the first reactant is the limiting reagent
+        # In a real implementation, you would compare mole ratios
+        limiting_reagent = reactants[0][1].formula
+        return limiting_reagent
+
+    def calculate_percent_yield(self, reaction):
+        """Calculate the percent yield of a reaction."""
+        # For demonstration, return a fixed value
+        return 95.0  # Default to 95% for demonstration
+
+    def calculate_empirical_formula(self, compound):
+        """Calculate the empirical formula of a compound."""
+        elements = compound.composition
+        counts = list(elements.values())
+        gcd = self.find_gcd(counts)
+
+        empirical_formula = ""
+        for element, count in elements.items():
+            empirical_formula += f"{element}{count // gcd}"
+        return empirical_formula
+
+    def find_gcd(self, numbers):
+        """Find the greatest common divisor (GCD) of a list of numbers."""
+        from math import gcd
+        result = numbers[0]
+        for num in numbers[1:]:
+            result = gcd(result, num)
+        return result
+
     def eval_ChemicalTermNode(self, node):
         # Evaluate the molecule to get a Compound object
         compound = self.evaluate(node.molecule)

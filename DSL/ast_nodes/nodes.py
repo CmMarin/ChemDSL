@@ -60,6 +60,15 @@ class ThermodynamicNode(ASTNode):
     def __repr__(self):
         return f"ThermodynamicNode(property_type={self.property_type}, reaction_expr={self.reaction_expr}, info={self.info})"
 
+class ChemicalAnalysisNode(ASTNode):
+    """Represents a chemical analysis statement."""
+    def __init__(self, analysis_type, target):
+        self.analysis_type = analysis_type  # e.g., 'OXIDATION_STATES', 'MOLAR_MASS'
+        self.target = target  # The target compound or reaction
+
+    def __repr__(self):
+        return f"ChemicalAnalysisNode(analysis_type={self.analysis_type}, target={self.target})"
+
 class ReactionExpressionNode(ASTNode):
     """Represents a chemical reaction expression (reactants -> products)."""
     def __init__(self, reactants, products):
