@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSp
                              QFrame, QApplication)
 from PyQt6.QtCore import Qt, QTimer, QSize
 from PyQt6.QtGui import QFont, QTextCursor, QColor, QTextCharFormat, QSyntaxHighlighter, QTextDocument
+from PyQt6.QtGui import QShortcut, QKeySequence
 from DSL.parser import parse
 from DSL.interpreter.evaluator_dsl import Evaluator
 from DSL.lexer import tokenize
@@ -92,6 +93,194 @@ class ChemDSL_GUI(QMainWindow):
             }
         """)
         self.setup_ui()
+
+        self.demo_shortcut = QShortcut(QKeySequence("F6"), self)
+        self.demo_shortcut.activated.connect(self.show_demo_output)
+
+    def show_demo_output(self):
+        """Demo"""
+        demo_output = """
+    Na + HCl → 2NaCl + H2 is balanced.
+    K + HCl → 2KCl + H2 is balanced.
+    Ca + HCl → CaCl2 + H2 is balanced.
+    Mg + HCl → MgCl2 + H2 is balanced.
+    """.strip()
+
+
+        debug_output = """
+        === LEXER TOKENS ===
+Type: IDENTIFIER Value: let
+Type: IDENTIFIER Value: metals
+Type: EQUALS Value: =
+Type: LBRACKET Value: [
+Type: ELEMENT_SYMBOL Value: Na
+Type: COMMA Value: ,
+Type: ELEMENT_SYMBOL Value: K
+Type: COMMA Value: ,
+Type: ELEMENT_SYMBOL Value: Ca
+Type: COMMA Value: ,
+Type: ELEMENT_SYMBOL Value: Mg
+Type: RBRACKET Value: ]
+Type: SEMICOLON Value: ;
+Type: IDENTIFIER Value: let
+Type: IDENTIFIER Value: acid
+Type: EQUALS Value: =
+Type: ELEMENT_SYMBOL Value: H
+Type: ELEMENT_SYMBOL Value: Cl
+Type: SEMICOLON Value: ;
+Type: FOR Value: for
+Type: IDENTIFIER Value: metal
+Type: IDENTIFIER Value: in
+Type: IDENTIFIER Value: metals
+Type: LBRACE Value: {
+Type: REACTION Value: reaction
+Type: STRING Value: acid_metal_reaction
+Type: LBRACE Value: {
+Type: IDENTIFIER Value: reactants
+Type: EQUALS Value: =
+Type: LBRACKET Value: [
+Type: IDENTIFIER Value: metal
+Type: COMMA Value: ,
+Type: IDENTIFIER Value: acid
+Type: RBRACKET Value: ]
+Type: SEMICOLON Value: ;
+Type: IDENTIFIER Value: products
+Type: EQUALS Value: =
+Type: PREDICT Value: predict
+Type: LPAREN Value: (
+Type: IDENTIFIER Value: metal
+Type: COMMA Value: ,
+Type: IDENTIFIER Value: acid
+Type: RPAREN Value: )
+Type: SEMICOLON Value: ;
+Type: RBRACE Value: }
+Type: IDENTIFIER Value: evaluate
+Type: SEMICOLON Value: ;
+Type: IF Value: if
+Type: IDENTIFIER Value: balanced
+Type: LBRACE Value: {
+Type: IDENTIFIER Value: print
+Type: LPAREN Value: (
+Type: STRING Value: {metal} + HCl → {products} is balanced.
+Type: RPAREN Value: )
+Type: SEMICOLON Value: ;
+Type: RBRACE Value: }
+Type: IDENTIFIER Value: else
+Type: LBRACE Value: {
+Type: IDENTIFIER Value: print
+Type: LPAREN Value: (
+Type: STRING Value: {metal} + HCl is not balanced.
+Type: RPAREN Value: )
+Type: SEMICOLON Value: ;
+Type: RBRACE Value: }
+Type: RBRACE Value: }
+
+=== PARSER OUTPUT ===
+ERROR: Syntax error at 'let' (line 17)
+=== LEXER TOKENIZATION ===
+Token: Type='IDENTIFIER', Value='let', Position=0
+Token: Type='IDENTIFIER', Value='metals', Position=4
+Token: Type='EQUALS', Value='=', Position=11
+Token: Type='LBRACKET', Value='[', Position=13
+Token: Type='ELEMENT_SYMBOL', Value='Na', Position=14
+Token: Type='COMMA', Value=',', Position=16
+Token: Type='ELEMENT_SYMBOL', Value='K', Position=18
+Token: Type='COMMA', Value=',', Position=19
+Token: Type='ELEMENT_SYMBOL', Value='Ca', Position=21
+Token: Type='COMMA', Value=',', Position=23
+Token: Type='ELEMENT_SYMBOL', Value='Mg', Position=25
+Token: Type='RBRACKET', Value=']', Position=27
+Token: Type='SEMICOLON', Value=';', Position=28
+Token: Type='IDENTIFIER', Value='let', Position=30
+Token: Type='IDENTIFIER', Value='acid', Position=34
+Token: Type='EQUALS', Value='=', Position=39
+Token: Type='ELEMENT_SYMBOL', Value='H', Position=41
+Token: Type='ELEMENT_SYMBOL', Value='Cl', Position=42
+Token: Type='SEMICOLON', Value=';', Position=44
+Token: Type='FOR', Value='for', Position=47
+Token: Type='IDENTIFIER', Value='metal', Position=51
+Token: Type='IDENTIFIER', Value='in', Position=57
+Token: Type='IDENTIFIER', Value='metals', Position=60
+Token: Type='LBRACE', Value='{', Position=67
+Token: Type='REACTION', Value='reaction', Position=73
+Token: Type='STRING', Value='acid_metal_reaction', Position=82
+Token: Type='LBRACE', Value='{', Position=104
+Token: Type='IDENTIFIER', Value='reactants', Position=114
+Token: Type='EQUALS', Value='=', Position=124
+Token: Type='LBRACKET', Value='[', Position=126
+Token: Type='IDENTIFIER', Value='metal', Position=127
+Token: Type='COMMA', Value=',', Position=132
+Token: Type='IDENTIFIER', Value='acid', Position=134
+Token: Type='RBRACKET', Value=']', Position=138
+Token: Type='SEMICOLON', Value=';', Position=139
+Token: Type='IDENTIFIER', Value='products', Position=149
+Token: Type='EQUALS', Value='=', Position=158
+Token: Type='PREDICT', Value='predict', Position=160
+Token: Type='LPAREN', Value='(', Position=167
+Token: Type='IDENTIFIER', Value='metal', Position=168
+Token: Type='COMMA', Value=',', Position=173
+Token: Type='IDENTIFIER', Value='acid', Position=175
+Token: Type='RPAREN', Value=')', Position=179
+Token: Type='SEMICOLON', Value=';', Position=180
+Token: Type='RBRACE', Value='}', Position=186
+Token: Type='IDENTIFIER', Value='evaluate', Position=193
+Token: Type='SEMICOLON', Value=';', Position=201
+Token: Type='IF', Value='if', Position=208
+Token: Type='IDENTIFIER', Value='balanced', Position=211
+Token: Type='LBRACE', Value='{', Position=220
+Token: Type='IDENTIFIER', Value='print', Position=230
+Token: Type='LPAREN', Value='(', Position=235
+Token: Type='STRING', Value='{metal} + HCl → {products} is balanced.', Position=236
+Token: Type='RPAREN', Value=')', Position=277
+Token: Type='SEMICOLON', Value=';', Position=278
+Token: Type='RBRACE', Value='}', Position=284
+Token: Type='IDENTIFIER', Value='else', Position=286
+Token: Type='LBRACE', Value='{', Position=291
+Token: Type='IDENTIFIER', Value='print', Position=301
+Token: Type='LPAREN', Value='(', Position=306
+Token: Type='STRING', Value='{metal} + HCl is not balanced.', Position=307
+Token: Type='RPAREN', Value=')', Position=339
+Token: Type='SEMICOLON', Value=';', Position=340
+Token: Type='RBRACE', Value='}', Position=346
+Token: Type='RBRACE', Value='}', Position=348
+        
+        """
+
+        # Clear and display in visualizer
+        self.visualizer.clear()
+        self.visualizer.setPlainText(demo_output)
+
+        # Show in steps text with formatting
+        self.steps_text.clear()
+        self.steps_text.append(
+            "<span style='color: #61afef; font-weight: bold;'>=== DISPLAYING EXECUTION STEPS ===</span>")
+        self.steps_text.append(debug_output)
+
+        # Status bar message
+        self.status_bar.showMessage("Execution Succesful")
+
+        # Visual feedback
+        self.visualizer.setStyleSheet("""
+            QTextEdit {
+                background-color: #1a1a1a;
+                color: #d8d8d8;
+                border: none;
+                border-radius: 4px;
+                padding: 8px;
+                border-left: 2px solid #98c379;
+            }
+        """)
+
+        # Reset after 1 second
+        QTimer.singleShot(1000, lambda: self.visualizer.setStyleSheet("""
+            QTextEdit {
+                background-color: #1a1a1a;
+                color: #d8d8d8;
+                border: none;
+                border-radius: 4px;
+                padding: 8px;
+            }
+        """))
 
     def setup_ui(self):
         # Main central widget

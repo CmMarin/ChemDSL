@@ -87,7 +87,7 @@ def p_condition(p):
             value=f"{p[3]}{p[4]}"
         )
     else:  # Logical operator (e.g., AND, OR)
-        operator = p.slice[2].type  # Correctly get token type (AND/OR)
+        operator = p.slice[2].type  # Correctly  get token type (AND/OR)
         p[0] = nodes.ConditionNode(
             condition_type='LOGICAL',
             left=p[1],
