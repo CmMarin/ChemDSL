@@ -207,7 +207,7 @@ def test_lexer(data: str) -> None:
         print(tok)
 
 def tokenize(data: str) -> List[Dict[str, Any]]:
-    """Tokenize input string with logging"""
+    """Tokenize input strings with logging"""
     print("=== LEXER TOKENIZATION ===")
     lexer.input(data)
     result = []

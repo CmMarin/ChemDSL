@@ -445,7 +445,7 @@ class Evaluator:
         return empirical_formula
 
     def eval_ConditionNode(self, node):
-        """Evaluate a condition node."""
+        """Evaluate a condition/s node."""
         logging.debug(f"Evaluating condition: type={node.condition_type}, value={node.value}, operator={node.operator}")
 
         if node.condition_type == 'LOGICAL':
