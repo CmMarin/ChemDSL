@@ -1,7 +1,7 @@
 """
 DSL/interpreter/environment.py
 
-Defines the environment for storing variable and function definitions during evaluation.
+Defines the environment for storing variable and function definitions during evaluations.
 """
 
 class Environment:

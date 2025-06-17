@@ -1,6 +1,6 @@
 """
 DSL/parser.py
-Parser for ChemDSL using PLY (Python Lex-Yacc)
+Parser for ChemDSL using PLY ( Python Lex-Yacc)
 """
 
 import ply.yacc as yacc
